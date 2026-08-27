@@ -1,35 +1,65 @@
-4. Use case Diagram:
-1.	Overview of Use-Case Diagrams
-   1.1	List of Actor
+# 4. Use case Diagram:
+
+**1.	Overview of Use-Case Diagrams**
+
+   **1.1	List of Actor**
+   
   	1.1.1. Guest: Guests or users who have not logged into the system.
+   
   	1.1.2. Reader: Registered readers who have been issued a library card have an account to access online functions (OPAC, renewals, and holds).
+   
   	1.1.3  Staff: The librarian on duty at the circulation desk is authorized to handle circulation transactions (lending and returns) and manage the   collection.
+   
   	1.1.4  Admin: Senior system administrator responsible for managing library staff, configuring library policies, and approving reports
-   1.2	List of Use-case
+   **1.2	List of Use-case**
+   
   	1.2.1 Register Account: Sign up for a new reader account.
+   
   	1.2.2 Log in: Log in to the system
+   
   	1.2.3 Recover Password: Reset forgotten password.
+   
   	1.2.4 View Personal Information: View personal profile details.
+   
   	1.2.5 Search Books: Search for library books.
+
   	1.2.6 Reserve Book: Hold a book on the shelf.
+   
   	1.2.7 View Borrowing History: View past and current book borrows.
+   
   	1.2.8 Add to Online Wishlist: Save favorite books to list.
+   
   	1.2.9 Remove from Online Wishlist: Delete books from wishlist
+   
   	1.2.10 Renew Books Online: Extend book borrow via web/app.
+   
   	1.2.11 Manage Book Catalog: Add, edit, or delete books.
+   
   	1.2.12 Process Borrowing: Issue physical books to readers. 
+   
   	1.2.13 Over-the-Counter Renewal: Extend book borrow at the counter.
+   
   	1.2.14 Verify Reader Card: Validate reader card status.
+   
   	1.2.15 Process Return: Receive returned books
+   
   	1.2.16 Issue Fine Ticket: Create overdue or damage fine.
+   
   	1.2.17 Print Receipt: Print transaction receipts.
+   
   	1.2.18 Collect Fine Payment: Receive fine payment from reader
+   
   	1.2.19 Manage Staff Accounts: Add, edit, or delete staff profiles
+   
   	1.2.20 Manage Reader Accounts: Edit and activate reader accounts.
+   
   	1.2.21 Statistics & Reports: View and export library reports
+   
   	1.2.22 View Registration Requests: View pending sign-up requests
+   
   	1.2.23 Approve Reader Card Issue: Activate card and issue QR code
-  	2. Use-case Register Account
+   
+  	**2. Use-case Register Account**
 2.1. Tóm tắt: Cho phép khách vãng lai đăng ký tài khoản độc giả trực tuyến để gửi yêu cầu cấp thẻ thành viên mới lên hệ thống.
 2.2. Dòng sự kiện:
 2.2.1. Dòng sự kiện chính:
