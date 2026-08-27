@@ -1,424 +1,931 @@
-import { useState } from "react";
-
-type PortalView =
-  | "opac"
-  | "login"
-  | "register"
-  | "forgot"
-  | "profile"
-  | "history"
-  | "wishlist";
-
-const BOOKS = [
-  { id: 1,  title: "Đắc Nhân Tâm", author: "Dale Carnegie", genre: "Kỹ năng sống", year: 2020, copies: 3, available: 2, cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=80&h=110&fit=crop&auto=format" },
-  { id: 2,  title: "Nhà Giả Kim", author: "Paulo Coelho", genre: "Tiểu thuyết", year: 2018, copies: 5, available: 0, cover: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=80&h=110&fit=crop&auto=format" },
-  { id: 3,  title: "Tư Duy Phản Biện", author: "Richard Paul", genre: "Giáo dục", year: 2021, copies: 4, available: 4, cover: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=110&fit=crop&auto=format" },
-  { id: 4,  title: "Sapiens: Lược Sử Loài Người", author: "Yuval Noah Harari", genre: "Lịch sử", year: 2019, copies: 6, available: 1, cover: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=80&h=110&fit=crop&auto=format" },
-  { id: 5,  title: "Atomic Habits", author: "James Clear", genre: "Kỹ năng sống", year: 2022, copies: 3, available: 3, cover: "https://images.unsplash.com/photo-1509266272358-7701da638078?w=80&h=110&fit=crop&auto=format" },
-  { id: 6,  title: "Người Đua Diều", author: "Khaled Hosseini", genre: "Tiểu thuyết", year: 2017, copies: 2, available: 0, cover: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=80&h=110&fit=crop&auto=format" },
-  { id: 7,  title: "Homo Deus: Lược Sử Tương Lai", author: "Yuval Noah Harari", genre: "Lịch sử", year: 2020, copies: 4, available: 2, cover: "https://images.unsplash.com/photo-1589998059171-988d887df646?w=80&h=110&fit=crop&auto=format" },
-  { id: 8,  title: "Rừng Na-Uy", author: "Haruki Murakami", genre: "Tiểu thuyết", year: 2016, copies: 3, available: 1, cover: "https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=80&h=110&fit=crop&auto=format" },
-  { id: 9,  title: "Thép Đã Tôi Thế Đấy", author: "Nikolai Ostrovsky", genre: "Tiểu thuyết", year: 2015, copies: 2, available: 2, cover: "https://images.unsplash.com/photo-1495640388908-05fa85288e61?w=80&h=110&fit=crop&auto=format" },
-  { id: 10, title: "Nghĩ Giàu Làm Giàu", author: "Napoleon Hill", genre: "Kỹ năng sống", year: 2019, copies: 5, available: 0, cover: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=80&h=110&fit=crop&auto=format" },
-  { id: 11, title: "Dế Mèn Phiêu Lưu Ký", author: "Tô Hoài", genre: "Văn học Việt Nam", year: 2018, copies: 7, available: 5, cover: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=80&h=110&fit=crop&auto=format" },
-  { id: 12, title: "Số Đỏ", author: "Vũ Trọng Phụng", genre: "Văn học Việt Nam", year: 2017, copies: 4, available: 3, cover: "https://images.unsplash.com/photo-1535398089889-dd807df1dfaa?w=80&h=110&fit=crop&auto=format" },
-  { id: 13, title: "Tắt Đèn", author: "Ngô Tất Tố", genre: "Văn học Việt Nam", year: 2016, copies: 3, available: 0, cover: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=80&h=110&fit=crop&auto=format" },
-  { id: 14, title: "Lập Trình Python Cơ Bản", author: "Nguyễn Thanh Tùng", genre: "Công nghệ", year: 2023, copies: 6, available: 4, cover: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=80&h=110&fit=crop&auto=format" },
-  { id: 15, title: "Trí Tuệ Nhân Tạo: Một Góc Nhìn Mới", author: "Stuart Russell", genre: "Công nghệ", year: 2022, copies: 3, available: 2, cover: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=80&h=110&fit=crop&auto=format" },
-  { id: 16, title: "Bắt Trẻ Đồng Xanh", author: "J.D. Salinger", genre: "Tiểu thuyết", year: 2014, copies: 2, available: 1, cover: "https://images.unsplash.com/photo-1474366521628-c0ea16c3a3a1?w=80&h=110&fit=crop&auto=format" },
-  { id: 17, title: "Toán Cao Cấp Tập 1", author: "Nguyễn Đình Trí", genre: "Giáo dục", year: 2021, copies: 10, available: 7, cover: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=80&h=110&fit=crop&auto=format" },
-  { id: 18, title: "Lịch Sử Việt Nam Toàn Tập", author: "Nhiều tác giả", genre: "Lịch sử", year: 2020, copies: 5, available: 3, cover: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54?w=80&h=110&fit=crop&auto=format" },
-  { id: 19, title: "Kinh Tế Học Vi Mô", author: "N. Gregory Mankiw", genre: "Kinh tế", year: 2022, copies: 4, available: 0, cover: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=80&h=110&fit=crop&auto=format" },
-  { id: 20, title: "Cây Cam Ngọt Của Tôi", author: "José Mauro de Vasconcelos", genre: "Tiểu thuyết", year: 2021, copies: 6, available: 4, cover: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=80&h=110&fit=crop&auto=format" },
+import React, { useState } from 'react';
+const MOCK_BOOKS = [
+  {
+    id: 'b1',
+    title: 'Cơ học kết cấu',
+    author: 'GS. Nguyễn Văn Mạnh',
+    category: 'Xây dựng',
+    publisher: 'NXB Giao thông Vận tải',
+    year: '2021',
+    isbn: '978-604-67-0823-1',
+    language: 'Tiếng Việt',
+    pages: 412,
+    totalCopies: 8,
+    availableCopies: 5,
+    popularity: 94,
+    location: { room: 'Phòng đọc A1', shelf: 'KT-07', level: 'Kệ 3, Tầng 2' },
+    cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80',
+  },
+  {
+    id: 'b2',
+    title: 'Logistics và Quản lý chuỗi cung ứng',
+    author: 'TS. Lê Thị Thu Hà',
+    category: 'Vận tải & Logistics',
+    publisher: 'NXB Giao thông Vận tải',
+    year: '2022',
+    isbn: '978-604-67-0911-5',
+    language: 'Tiếng Việt',
+    pages: 380,
+    totalCopies: 10,
+    availableCopies: 2,
+    popularity: 88,
+    location: { room: 'Phòng đọc A2', shelf: 'LG-03', level: 'Kệ 1, Tầng 1' },
+    cover: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80',
+  },
+  {
+    id: 'b3',
+    title: 'Transportation Engineering',
+    author: 'Nicholas J. Garber & Lester A. Hoel',
+    category: 'Công trình giao thông',
+    publisher: 'Cengage Learning',
+    year: '2020',
+    isbn: '978-1-133-60515-7',
+    language: 'Tiếng Anh',
+    pages: 520,
+    totalCopies: 6,
+    availableCopies: 4,
+    popularity: 91,
+    location: { room: 'Phòng đọc Ngoại văn', shelf: 'TE-01', level: 'Kệ 2, Tầng 3' },
+    cover: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&q=80',
+  },
+  {
+    id: 'b4',
+    title: 'Kinh tế vĩ mô',
+    author: 'Gregory N. Mankiw',
+    category: 'Kinh tế',
+    publisher: 'NXB Hồng Đức',
+    year: '2021',
+    isbn: '978-604-992-123-8',
+    language: 'Tiếng Việt',
+    pages: 450,
+    totalCopies: 12,
+    availableCopies: 8,
+    popularity: 85,
+    location: { room: 'Phòng đọc A1', shelf: 'KT-02', level: 'Kệ 4, Tầng 1' },
+    cover: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80',
+  }
 ];
 
-const BORROW_HISTORY = [
-  { id: "PM001", title: "Đắc Nhân Tâm", borrowDate: "01/07/2026", dueDate: "21/07/2026", returnDate: "19/07/2026", status: "Đã trả", fine: 0 },
-  { id: "PM002", title: "Sapiens: Lược Sử Loài Người", borrowDate: "10/07/2026", dueDate: "30/07/2026", returnDate: null, status: "Đang mượn", fine: 0 },
-  { id: "PM003", title: "Atomic Habits", borrowDate: "05/06/2026", dueDate: "25/06/2026", returnDate: "28/06/2026", status: "Quá hạn", fine: 9000 },
-  { id: "PM004", title: "Nhà Giả Kim", borrowDate: "15/08/2026", dueDate: "04/09/2026", returnDate: null, status: "Sắp hết hạn", fine: 0 },
+const MOCK_BORROW_HISTORY = [
+  { id: 1, title: 'Cơ học kết cấu', author: 'GS. Nguyễn Văn Mạnh', borrowDate: '5/8/2026', dueDate: '5/9/2026', renewCount: '1/4', status: 'Đang mượn', canRenew: true, isOverdue: false },
+  { id: 2, title: 'Logistics và Quản lý chuỗi cung ứng', author: 'TS. Lê Thị Thu Hà', borrowDate: '20/7/2026', dueDate: '20/8/2026', renewCount: '2/4', status: 'Trả trễ', canRenew: false, isOverdue: true },
+  { id: 3, title: 'Transportation Engineering', author: 'Nicholas J. Garber & Lester A. Hoel', borrowDate: '10/8/2026', dueDate: '10/9/2026', renewCount: '0/4', status: 'Đang mượn', canRenew: true, isOverdue: false },
+  { id: 4, title: 'Kinh tế vĩ mô', author: 'Gregory N. Mankiw', borrowDate: '1/6/2026', dueDate: '1/7/2026', renewCount: '4/4', status: 'Đã trả', canRenew: false, isOverdue: false }
 ];
 
-const WISHLIST_INIT = [2, 4, 6];
 
-function OPACSearch() {
-  const [query, setQuery] = useState("");
-  const [filterGenre, setFilterGenre] = useState("Tất cả");
-  const [filterStatus, setFilterStatus] = useState("Tất cả");
-  const [reservedBooks, setReservedBooks] = useState<number[]>([]);
-
-  const genres = ["Tất cả", "Kỹ năng sống", "Tiểu thuyết", "Giáo dục", "Lịch sử", "Văn học Việt Nam", "Công nghệ", "Kinh tế"];
-
-  const filtered = BOOKS.filter((b) => {
-    const q = query.toLowerCase();
-    const matchQ = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.genre.toLowerCase().includes(q);
-    const matchG = filterGenre === "Tất cả" || b.genre === filterGenre;
-    const matchS = filterStatus === "Tất cả" || (filterStatus === "Còn sách" && b.available > 0) || (filterStatus === "Hết sách" && b.available === 0);
-    return matchQ && matchG && matchS;
+export default function WebReaderApp() {
+  const [activeTab, setActiveTab] = useState<'home' | 'search' | 'favorites' | 'detail' | 'account'>('home');
+  const [selectedBook, setSelectedBook] = useState(MOCK_BOOKS[0]);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [userProfile, setUserProfile] = useState({
+    name: 'Nguyễn Văn An',
+    role: 'Sinh viên — Khoa Kỹ thuật Xây dựng',
+    code: 'UTH2024-08342',
+    issueDate: '15/09/2024',
+    expiryDate: '31/8/2026',
+    borrowingCount: 3,
+    overdueCount: 1,
+    avatar: 'NV'
   });
 
-  return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">Tra Cứu Thư Mục (OPAC)</h1>
-        <p className="text-slate-500 text-sm">Tìm kiếm sách theo tên, tác giả, thể loại hoặc từ khóa</p>
-      </div>
+  // Quản lý Modal Popup
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [showReserveSuccessModal, setShowReserveSuccessModal] = useState(false);
 
-      {/* Search bar */}
-      <div className="card p-5 mb-5">
-        <div className="flex gap-3 mb-4">
-          <div className="flex-1 relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            </span>
-            <input className="input-field pl-9" placeholder="Tìm theo tên sách, tác giả, từ khóa..." value={query} onChange={(e) => setQuery(e.target.value)} />
-          </div>
-          <button className="btn-primary">Tìm kiếm</button>
-        </div>
-        <div className="flex gap-3 flex-wrap">
-          <div>
-            <label className="text-xs font-semibold text-slate-500 mb-1 block">Thể loại</label>
-            <select className="input-field w-auto text-sm" value={filterGenre} onChange={(e) => setFilterGenre(e.target.value)}>
-              {genres.map((g) => <option key={g}>{g}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-slate-500 mb-1 block">Trạng thái</label>
-            <select className="input-field w-auto text-sm" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-              <option>Tất cả</option>
-              <option>Còn sách</option>
-              <option>Hết sách</option>
-            </select>
-          </div>
-        </div>
-      </div>
+  // Tìm kiếm
+  const [searchQuery, setSearchQuery] = useState('');
 
-      {/* Results */}
-      <div className="space-y-3">
-        <p className="text-sm text-slate-500 font-medium">Tìm thấy <span className="text-primary font-bold">{filtered.length}</span> kết quả</p>
-        {filtered.map((book) => (
-          <div key={book.id} className="card p-4 flex gap-4 items-start hover:border-blue-200 transition-colors">
-            <img src={book.cover} alt={book.title} className="w-16 h-22 object-cover rounded-md flex-shrink-0 bg-slate-100" style={{ height: 90 }} />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-semibold text-slate-900 text-base">{book.title}</h3>
-                  <p className="text-sm text-slate-500 mt-0.5">Tác giả: <span className="text-slate-700">{book.author}</span></p>
-                  <p className="text-sm text-slate-500">Thể loại: <span className="text-slate-700">{book.genre}</span> · Năm: {book.year}</p>
-                </div>
-                <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                  {book.available > 0
-                    ? <span className="badge badge-green">Còn {book.available}/{book.copies} cuốn</span>
-                    : <span className="badge badge-red">Hết sách</span>
-                  }
-                  <button
-                    className={`btn-${book.available > 0 ? "primary" : "secondary"} text-xs py-1.5 px-3`}
-                    disabled={reservedBooks.includes(book.id) || book.available === 0}
-                    onClick={() => setReservedBooks([...reservedBooks, book.id])}
-                    style={{ fontSize: 13, padding: "6px 14px" }}
-                  >
-                    {reservedBooks.includes(book.id) ? "✓ Đã đặt giữ" : book.available > 0 ? "Đặt giữ chỗ" : "Hết sách"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function AuthForm({ view, setView }: { view: PortalView; setView: (v: PortalView) => void }) {
-  const [form, setForm] = useState({ email: "", password: "", name: "", phone: "" });
-  const [success, setSuccess] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (view === "login") setView("profile");
-    else setSuccess(true);
+  const openBookDetail = (book: typeof MOCK_BOOKS[0]) => {
+    setSelectedBook(book);
+    setActiveTab('detail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (success && view !== "login") {
-    return (
-      <div className="max-w-md mx-auto mt-10 card p-8 text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">
-          {view === "register" ? "Đăng ký thành công!" : "Email đã được gửi!"}
-        </h2>
-        <p className="text-slate-500 text-sm mb-6">
-          {view === "register" ? "Tài khoản của bạn đang chờ phê duyệt từ thư viện." : "Vui lòng kiểm tra hộp thư để đặt lại mật khẩu."}
-        </p>
-        <button className="btn-primary w-full justify-center" onClick={() => { setSuccess(false); setView("login"); }}>Về trang Đăng nhập</button>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-md mx-auto mt-8">
-      <div className="card p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">
-              {view === "login" ? "Đăng nhập" : view === "register" ? "Đăng ký tài khoản" : "Khôi phục mật khẩu"}
-            </h2>
-            <p className="text-slate-500 text-xs">Hệ thống Quản lý Thư viện</p>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {view === "register" && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Họ và tên</label>
-                <input className="input-field" placeholder="Nguyễn Văn A" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Số điện thoại</label>
-                <input className="input-field" placeholder="0901 234 567" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
-              </div>
-            </>
-          )}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-            <input className="input-field" type="email" placeholder="email@example.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-          </div>
-          {view !== "forgot" && (
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col">
+      {/* */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          {/* Logo & Brand Name */}
+          <div 
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => setActiveTab('home')}
+          >
+            <div className="w-10 h-10 bg-[#005f60] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+              📖
+            </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Mật khẩu</label>
-              <input className="input-field" type="password" placeholder="••••••••" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+              <h1 className="font-bold text-[#005f60] text-lg leading-tight">UTH Library</h1>
+              <p className="text-[10px] text-slate-500 font-medium">THƯ VIỆN TRƯỜNG ĐH GTVT TP.HCM</p>
             </div>
-          )}
-          {view === "login" && (
-            <div className="text-right">
-              <button type="button" className="text-sm text-blue-600 font-medium hover:underline" onClick={() => setView("forgot")}>Quên mật khẩu?</button>
-            </div>
-          )}
-          <button type="submit" className="btn-primary w-full justify-center mt-2" style={{ padding: "12px 20px" }}>
-            {view === "login" ? "Đăng nhập" : view === "register" ? "Tạo tài khoản" : "Gửi email khôi phục"}
-          </button>
-        </form>
-
-        <div className="mt-5 text-center text-sm">
-          {view === "login" ? (
-            <span className="text-slate-500">Chưa có tài khoản? <button className="text-blue-600 font-semibold hover:underline" onClick={() => setView("register")}>Đăng ký ngay</button></span>
-          ) : (
-            <span className="text-slate-500">Đã có tài khoản? <button className="text-blue-600 font-semibold hover:underline" onClick={() => setView("login")}>Đăng nhập</button></span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ReaderProfile() {
-  const [tab, setTab] = useState<"info" | "history" | "wishlist">("info");
-  const [wishlist, setWishlist] = useState<number[]>(WISHLIST_INIT);
-
-  return (
-    <div>
-      <div className="mb-6 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white text-xl font-bold">NA</div>
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">Nguyễn Thị An</h1>
-          <p className="text-slate-500 text-sm">Độc giả · Mã thẻ: <span className="font-mono text-blue-600">DR-2024-0142</span></p>
-        </div>
-        <div className="ml-auto"><span className="badge badge-green">Thẻ còn hạn</span></div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-slate-100 p-1 rounded-xl w-fit">
-        {(["info", "history", "wishlist"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${tab === t ? "bg-white text-blue-700 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
-            {t === "info" ? "Thông tin cá nhân" : t === "history" ? "Lịch sử mượn trả" : "Sách yêu thích"}
-          </button>
-        ))}
-      </div>
-
-      {tab === "info" && (
-        <div className="card p-6 max-w-2xl">
-          <h3 className="font-bold text-slate-800 mb-4">Thông tin tài khoản</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              ["Họ và tên", "Nguyễn Thị An"], ["Email", "an.nguyen@email.com"],
-              ["Số điện thoại", "0912 345 678"], ["CMND/CCCD", "079 123 456 789"],
-              ["Ngày sinh", "15/03/1998"], ["Địa chỉ", "123 Nguyễn Huệ, Q.1, TP.HCM"],
-              ["Ngày cấp thẻ", "01/01/2024"], ["Ngày hết hạn thẻ", "01/01/2026"],
-            ].map(([label, val]) => (
-              <div key={label} className="bg-slate-50 rounded-lg p-3">
-                <p className="text-xs text-slate-500 mb-0.5">{label}</p>
-                <p className="text-sm font-semibold text-slate-800">{val}</p>
-              </div>
-            ))}
           </div>
-          <button className="btn-secondary mt-4">Chỉnh sửa thông tin</button>
-        </div>
-      )}
 
-      {tab === "history" && (
-        <div className="card overflow-hidden">
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="font-bold text-slate-800">Lịch sử mượn trả sách</h3>
-            <span className="text-sm text-slate-500">Tổng: {BORROW_HISTORY.length} lần mượn</span>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Mã phiếu</th><th>Tên sách</th><th>Ngày mượn</th><th>Hạn trả</th><th>Ngày trả</th><th>Trạng thái</th><th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {BORROW_HISTORY.map((r) => (
-                <tr key={r.id}>
-                  <td className="font-mono text-xs text-blue-600">{r.id}</td>
-                  <td className="font-medium">{r.title}</td>
-                  <td>{r.borrowDate}</td>
-                  <td>{r.dueDate}</td>
-                  <td>{r.returnDate || <span className="text-slate-400">—</span>}</td>
-                  <td>
-                    <span className={`badge ${r.status === "Đã trả" ? "badge-gray" : r.status === "Đang mượn" ? "badge-blue" : r.status === "Sắp hết hạn" ? "badge-amber" : "badge-red"}`}>
-                      {r.status}
-                    </span>
-                  </td>
-                  <td>
-                    {(r.status === "Đang mượn" || r.status === "Sắp hết hạn") && (
-                      <button className="btn-success" style={{ fontSize: 12, padding: "5px 12px" }}>Gia hạn</button>
-                    )}
-                    {r.fine > 0 && <span className="text-red-600 font-semibold text-sm">{r.fine.toLocaleString()}đ</span>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+            <button 
+              onClick={() => setActiveTab('home')} 
+              className={`hover:text-[#005f60] transition ${activeTab === 'home' ? 'text-[#005f60] font-bold border-b-2 border-[#005f60] py-5' : 'text-slate-600'}`}
+            >
+              Trang chủ
+            </button>
+            <button 
+              onClick={() => setActiveTab('search')} 
+              className={`hover:text-[#005f60] transition ${activeTab === 'search' ? 'text-[#005f60] font-bold border-b-2 border-[#005f60] py-5' : 'text-slate-600'}`}
+            >
+              Tìm kiếm
+            </button>
+            <button 
+              onClick={() => setActiveTab('favorites')} 
+              className={`hover:text-[#005f60] transition ${activeTab === 'favorites' ? 'text-[#005f60] font-bold border-b-2 border-[#005f60] py-5' : 'text-slate-600'}`}
+            >
+              Danh sách yêu thích
+            </button>
+            <button 
+              onClick={() => setActiveTab('account')} 
+              className={`hover:text-[#005f60] transition ${activeTab === 'account' ? 'text-[#005f60] font-bold border-b-2 border-[#005f60] py-5' : 'text-slate-600'}`}
+            >
+              Sách đã mượn
+            </button>
+          </nav>
 
-      {tab === "wishlist" && (
-        <div>
-          <p className="text-sm text-slate-500 mb-4">Danh sách sách bạn quan tâm ({wishlist.length} cuốn)</p>
-          <div className="space-y-3">
-            {BOOKS.filter((b) => wishlist.includes(b.id)).map((book) => (
-              <div key={book.id} className="card p-4 flex gap-4 items-center">
-                <img src={book.cover} alt={book.title} className="w-14 object-cover rounded bg-slate-100 flex-shrink-0" style={{ height: 80 }} />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-slate-900">{book.title}</h3>
-                  <p className="text-sm text-slate-500">{book.author} · {book.genre}</p>
-                  {book.available > 0
-                    ? <span className="badge badge-green mt-1">Còn {book.available} cuốn</span>
-                    : <span className="badge badge-red mt-1">Hết sách</span>
-                  }
-                </div>
-                <div className="flex gap-2">
-                  {book.available > 0 && <button className="btn-primary" style={{ fontSize: 13, padding: "7px 14px" }}>Đặt giữ</button>}
-                  <button className="btn-danger" style={{ fontSize: 13, padding: "7px 14px" }} onClick={() => setWishlist(wishlist.filter((id) => id !== book.id))}>Xóa</button>
-                </div>
+          {/* User Profile / Auth Buttons */}
+          <div className="flex items-center gap-3">
+            {isLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setActiveTab('account')}
+                  className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full px-3 py-1.5 transition text-xs font-semibold text-slate-700"
+                >
+                  <span className="w-6 h-6 bg-[#005f60] text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+                    {userProfile.avatar}
+                  </span>
+                  <span>{userProfile.name}</span>
+                </button>
+                <button 
+                  onClick={() => setIsLoggedIn(false)} 
+                  className="text-xs text-slate-500 hover:text-red-600 font-medium px-2 py-1"
+                >
+                  Đăng xuất
+                </button>
               </div>
-            ))}
-            {wishlist.length === 0 && (
-              <div className="card p-12 text-center text-slate-400">
-                <div className="text-4xl mb-3">📚</div>
-                <p>Danh sách yêu thích trống</p>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setShowLoginModal(true)} 
+                  className="px-4 py-2 text-xs font-semibold text-[#005f60] hover:bg-teal-50 rounded-lg transition"
+                >
+                  Đăng nhập
+                </button>
+                <button 
+                  onClick={() => setShowRegisterModal(true)} 
+                  className="px-4 py-2 text-xs font-semibold bg-[#005f60] hover:bg-[#004b4c] text-white rounded-lg transition shadow-sm"
+                >
+                  Đăng ký
+                </button>
               </div>
             )}
           </div>
         </div>
+      </header>
+
+      {/**/}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        {/**/}
+        {(activeTab === 'home' || activeTab === 'search') && (
+          <div className="space-y-8">
+            {/* Banner Tìm kiếm */}
+            <div className="bg-[#005f60] text-white rounded-2xl p-8 shadow-lg relative overflow-hidden">
+              <div className="relative z-10 max-w-2xl space-y-4">
+                <span className="bg-white/20 text-teal-100 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-md">
+                  Thư viện điện tử UTH
+                </span>
+                <h2 className="text-2xl md:text-3xl font-bold">
+                  Tra cứu hàng ngàn tài liệu, giáo trình & sách chuyên ngành
+                </h2>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="Nhập tên sách, tác giả, tên khoa hoặc mã ISBN..."
+                    className="flex-1 px-4 py-3 rounded-xl text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-inner"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6 py-3 rounded-xl text-sm transition shadow-md">
+                    Tìm kiếm
+                  </button>
+                </div>
+              </div>
+              <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+            </div>
+
+            {/* Danh sách sách */}
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-slate-800">Sách & Tài liệu nổi bật</h3>
+                <span className="text-xs font-medium text-[#005f60] cursor-pointer hover:underline">Xem tất cả ({MOCK_BOOKS.length}) →</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                {MOCK_BOOKS.filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase()) || b.author.toLowerCase().includes(searchQuery.toLowerCase())).map((book) => (
+                  <div 
+                    key={book.id}
+                    onClick={() => openBookDetail(book)}
+                    className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer flex flex-col group"
+                  >
+                    <div className="h-48 overflow-hidden bg-slate-100 relative">
+                      <img 
+                        src={book.cover} 
+                        alt={book.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      />
+                      <span className="absolute top-2 right-2 bg-[#005f60] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {book.category}
+                      </span>
+                    </div>
+                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                      <div>
+                        <h4 className="font-bold text-slate-800 line-clamp-1 group-hover:text-[#005f60] transition">{book.title}</h4>
+                        <p className="text-xs text-slate-500 mt-1">{book.author}</p>
+                      </div>
+                      <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
+                        <span className="text-slate-500">Kệ: <strong className="text-slate-700">{book.location.shelf}</strong></span>
+                        <span className="text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
+                          Còn {book.availableCopies} cuốn
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 
+            TAB: DANH SÁCH YÊU THÍCH
+      */}
+        {activeTab === 'favorites' && (
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4 max-w-lg mx-auto my-12 shadow-sm">
+            <div className="w-16 h-16 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center mx-auto text-2xl">
+              💖
+            </div>
+            <h3 className="text-lg font-bold text-slate-800">Danh sách yêu thích của bạn</h3>
+            <p className="text-xs text-slate-500">Bạn đã lưu 1 cuốn sách vào danh sách yêu thích.</p>
+            <button 
+              onClick={() => openBookDetail(MOCK_BOOKS[0])}
+              className="bg-[#005f60] text-white text-xs font-semibold px-4 py-2.5 rounded-lg hover:bg-[#004b4c]"
+            >
+              Xem cuốn sách đã lưu ({MOCK_BOOKS[0].title})
+            </button>
+          </div>
+        )}
+
+        {/* 
+            TAB: CHI TIẾT SÁCH & VỊ TRÍ TRÊN KỆ (ẢNH 5 & ẢNH 6)
+      */}
+        {activeTab === 'detail' && selectedBook && (
+          <div className="space-y-6 max-w-5xl mx-auto">
+            <button 
+              onClick={() => setActiveTab('home')}
+              className="text-xs font-medium text-slate-500 hover:text-[#005f60] flex items-center gap-1"
+            >
+              ← Quay lại trang chủ
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              {/* CỘT TRÁI: Vị trí lưu trữ & Tình trạng trên kệ */}
+              <div className="md:col-span-1 space-y-4">
+                
+                {/* Tình trạng trên kệ */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+                  <h4 className="text-xs font-bold text-slate-400 tracking-wider uppercase">Tình trạng trên kệ</h4>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-extrabold text-[#005f60]">{selectedBook.availableCopies}</span>
+                    <span className="text-slate-400 text-sm font-medium">/ {selectedBook.totalCopies} bản</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-[#005f60] h-full rounded-full transition-all duration-500"
+                      style={{ width: `${(selectedBook.availableCopies / selectedBook.totalCopies) * 100}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {selectedBook.availableCopies} bản có thể mượn ngay tại kệ
+                  </p>
+                </div>
+
+                {/* Vị trí lưu trữ chi tiết */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 text-xs">
+                  <h4 className="font-bold text-slate-400 tracking-wider uppercase">Vị trí lưu trữ</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2.5">
+                      <span className="text-base">🏛️</span>
+                      <div>
+                        <p className="text-slate-400">Phòng đọc</p>
+                        <p className="font-bold text-slate-800 text-sm">{selectedBook.location.room}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <span className="text-base">📚</span>
+                      <div>
+                        <p className="text-slate-400">Kệ sách</p>
+                        <p className="font-bold text-slate-800 text-sm">{selectedBook.location.shelf}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <span className="text-base">📍</span>
+                      <div>
+                        <p className="text-slate-400">Vị trí kệ</p>
+                        <p className="font-bold text-slate-800 text-sm">{selectedBook.location.level}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Nút Đặt giữ chỗ */}
+                <div className="space-y-2">
+                  <button 
+                    onClick={() => setShowReserveSuccessModal(true)} 
+                    className="w-full bg-[#005f60] hover:bg-[#004b4c] text-white py-3.5 rounded-xl font-bold text-sm transition shadow-md flex items-center justify-center gap-2"
+                  >
+                    <span>💻</span> Đặt giữ chỗ trên kệ
+                  </button>
+                  <button className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-xl font-semibold text-xs transition flex items-center justify-center gap-2">
+                    <span>💖</span> Thêm vào Danh sách yêu thích
+                  </button>
+                </div>
+              </div>
+
+              {/* CỘT PHẢI: Thông tin sách & Chỉ số phổ biến */}
+              <div className="md:col-span-2 space-y-6">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    <div className="w-32 h-44 bg-slate-100 rounded-xl overflow-hidden shrink-0 shadow-sm border border-slate-200">
+                      <img src={selectedBook.cover} alt={selectedBook.title} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="space-y-3">
+                      <span className="bg-teal-50 text-[#005f60] text-xs font-bold px-3 py-1 rounded-full border border-teal-100">
+                        {selectedBook.category}
+                      </span>
+                      <h2 className="text-2xl font-bold text-slate-800">{selectedBook.title}</h2>
+                      <p className="text-sm font-medium text-slate-500">Tác giả: <strong className="text-slate-700">{selectedBook.author}</strong></p>
+                      
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-3 pt-2 text-xs border-t border-slate-100">
+                        <div><p className="text-slate-400">Nhà xuất bản</p><p className="font-semibold text-slate-700">{selectedBook.publisher}</p></div>
+                        <div><p className="text-slate-400">Năm xuất bản</p><p className="font-semibold text-slate-700">{selectedBook.year}</p></div>
+                        <div><p className="text-slate-400">ISBN</p><p className="font-semibold text-slate-700">{selectedBook.isbn}</p></div>
+                        <div><p className="text-slate-400">Ngôn ngữ</p><p className="font-semibold text-slate-700">{selectedBook.language}</p></div>
+                        <div><p className="text-slate-400">Số trang</p><p className="font-semibold text-slate-700">{selectedBook.pages} trang</p></div>
+                        <div><p className="text-slate-400">Tổng số bản</p><p className="font-semibold text-slate-700">{selectedBook.totalCopies} bản</p></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Chỉ số phổ biến */}
+                  <div className="border-t border-slate-100 pt-6 space-y-3">
+                    <h4 className="font-bold text-slate-800 text-sm">Chỉ số phổ biến</h4>
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs text-slate-500 font-medium">Mức độ quan tâm</span>
+                      <div className="flex-1 bg-slate-100 h-3 rounded-full overflow-hidden">
+                        <div 
+                          className="bg-[#005f60] h-full rounded-full" 
+                          style={{ width: `${selectedBook.popularity}%` }}
+                        />
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-bold text-[#005f60]">{selectedBook.popularity}/100</span>
+                        <span className="text-lg font-extrabold text-slate-800 ml-2">{selectedBook.popularity}</span>
+                        <span className="text-[10px] text-slate-400 ml-0.5">điểm</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* 
+            TAB: TRANG TÀI KHOẢN CÁ NHÂN & THẺ BẠN ĐỌC (ẢNH 3 & ẢNH 4)
+         */}
+        {activeTab === 'account' && (
+          <div className="max-w-5xl mx-auto space-y-6">
+            
+            {/* BANNER CẢNH BÁO SẮP HẾT HẠN (ẢNH 3) */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3.5 text-amber-900 shadow-sm">
+              <span className="text-xl">⚠️</span>
+              <div className="space-y-0.5">
+                <h4 className="font-bold text-sm text-amber-900">
+                  Thẻ thư viện sắp hết hạn — còn 4 ngày
+                </h4>
+                <p className="text-xs text-amber-700">
+                  Thẻ của bạn hết hạn vào <strong>{userProfile.expiryDate}</strong>. Vui lòng đến quầy thư viện để gia hạn thẻ.
+                </p>
+              </div>
+            </div>
+
+            {/* KHUNG THẺ BẠN ĐỌC CÁ NHÂN (ẢNH 3) */}
+            <div className="bg-[#005f60] text-white rounded-2xl p-6 md:p-8 shadow-lg relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center font-bold text-xl backdrop-blur-md border border-white/20">
+                    {userProfile.avatar}
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-extrabold">{userProfile.name}</h2>
+                    <p className="text-xs text-teal-100 font-medium mt-1">{userProfile.role}</p>
+                  </div>
+                </div>
+
+                {/* Nút Thẻ thư viện số */}
+                <button 
+                  onClick={() => setShowQRModal(true)} 
+                  className="bg-white/10 hover:bg-white/20 border border-white/30 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 backdrop-blur-md transition shadow-sm"
+                >
+                  <span>📲</span> Thẻ thư viện số
+                </button>
+              </div>
+
+              {/* Grid 4 chỉ số */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/10 text-center">
+                <div className="p-2">
+                  <p className="text-xs text-teal-100 font-medium">Mã bạn đọc</p>
+                  <p className="font-bold text-sm mt-1">{userProfile.code}</p>
+                </div>
+                <div className="p-2">
+                  <p className="text-xs text-teal-100 font-medium">Hạn thẻ thư viện</p>
+                  <p className="font-bold text-sm mt-1 text-amber-300">{userProfile.expiryDate}</p>
+                </div>
+                <div className="p-2">
+                  <p className="text-xs text-teal-100 font-medium">Đang mượn</p>
+                  <p className="font-bold text-sm mt-1">{userProfile.borrowingCount} cuốn</p>
+                </div>
+                <div className="p-2">
+                  <p className="text-xs text-teal-100 font-medium">Trả trễ</p>
+                  <p className="font-bold text-sm mt-1 text-red-300">{userProfile.overdueCount} cuốn</p>
+                </div>
+              </div>
+            </div>
+
+            {/* BẢNG LỊCH SỬ MƯỢN SÁCH & GIA HẠN (ẢNH 3) */}
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 className="font-bold text-slate-800 text-base">Lịch sử mượn sách & Sách đang mượn</h3>
+                <span className="text-xs bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-semibold">
+                  {MOCK_BORROW_HISTORY.length} giao dịch
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200">
+                      <th className="p-4">NHAN ĐỀ SÁCH</th>
+                      <th className="p-4">NGÀY MƯỢN</th>
+                      <th className="p-4">HẠN TRẢ</th>
+                      <th className="p-4 text-center">GIA HẠN</th>
+                      <th className="p-4">TRẠNG THÁI</th>
+                      <th className="p-4 text-right">THAO TÁC</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {MOCK_BORROW_HISTORY.map((item) => (
+                      <tr key={item.id} className="hover:bg-slate-50/60 transition">
+                        <td className="p-4">
+                          <p className="font-bold text-slate-800 text-sm">{item.title}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">{item.author}</p>
+                        </td>
+                        <td className="p-4 font-medium text-slate-600">{item.borrowDate}</td>
+                        <td className="p-4">
+                          <p className={`font-semibold ${item.isOverdue ? 'text-red-600' : 'text-slate-700'}`}>
+                            {item.dueDate}
+                          </p>
+                          {item.isOverdue && <span className="text-[10px] text-red-500 font-bold block">Quá hạn</span>}
+                        </td>
+                        <td className="p-4 text-center font-bold text-[#005f60] text-sm">
+                          {item.renewCount}
+                        </td>
+                        <td className="p-4">
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold ${
+                            item.isOverdue 
+                              ? 'bg-red-100 text-red-700' 
+                              : item.status === 'Đã trả' 
+                              ? 'bg-slate-100 text-slate-500' 
+                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          }`}>
+                            • {item.status}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right">
+                          {item.canRenew ? (
+                            <button 
+                              onClick={() => alert(`Gia hạn thành công cuốn: ${item.title}`)}
+                              className="bg-[#005f60] hover:bg-[#004b4c] text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-sm"
+                            >
+                              Gia hạn
+                            </button>
+                          ) : (
+                            item.status === 'Trả trễ' ? (
+                              <button disabled className="bg-slate-100 text-slate-400 px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-not-allowed">
+                                Gia hạn
+                              </button>
+                            ) : null
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+      </main>
+
+      {/* 
+          3. MODAL POPUP THẺ BẠN ĐỌC ĐIỆN TỬ 
+      */}
+      {showQRModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
+            <div className="bg-[#005f60] text-white p-6 text-center space-y-1">
+              <p className="text-[10px] font-bold tracking-widest uppercase opacity-80">
+                TRƯỜNG ĐẠI HỌC GIAO THÔNG VẬN TẢI TP.HCM
+              </p>
+              <h3 className="font-extrabold text-lg tracking-wide">THẺ BẠN ĐỌC ĐIỆN TỬ</h3>
+            </div>
+
+            <div className="p-6 text-center space-y-5">
+              <div className="w-52 h-52 mx-auto border-2 border-[#005f60] rounded-2xl p-3 bg-white shadow-inner flex items-center justify-center">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${userProfile.code}`} 
+                  alt="QR Thẻ bạn đọc" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
+              <div>
+                <h4 className="font-extrabold text-slate-800 text-lg">{userProfile.name}</h4>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">{userProfile.role}</p>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-left space-y-2 text-xs font-medium text-slate-600">
+                <div className="flex justify-between">
+                  <span>Mã bạn đọc:</span>
+                  <span className="font-bold text-slate-800">{userProfile.code}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Ngày cấp thẻ:</span>
+                  <span className="font-semibold text-slate-700">{userProfile.issueDate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Hạn sử dụng:</span>
+                  <span className="font-bold text-amber-600">{userProfile.expiryDate}</span>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-400 font-medium">
+                Xuất trình mã QR này tại quầy thư viện để mượn / trả sách
+              </p>
+
+              <button 
+                onClick={() => setShowQRModal(false)}
+                className="w-full bg-[#005f60] hover:bg-[#004b4c] text-white py-3 rounded-xl font-bold text-xs transition shadow-md"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
       )}
+
+      {/* */}
+      {showReserveSuccessModal && selectedBook && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
+            <div className="bg-[#005f60] text-white p-6 text-center space-y-2">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto text-2xl font-bold border border-white/20">
+                ✓
+              </div>
+              <h3 className="font-extrabold text-xl">Đặt chỗ thành công!</h3>
+              <p className="text-xs text-teal-100">Sách đã được giữ chỗ cho bạn</p>
+            </div>
+
+            <div className="p-6 text-center space-y-5">
+              <div className="w-48 h-48 mx-auto border border-slate-200 rounded-2xl p-2 bg-white shadow-sm">
+                <img 
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=UTH-B001-B6E2NA" 
+                  alt="QR Biên nhận" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <p className="text-xs font-semibold text-slate-500">
+                QR biên nhận số <strong className="text-[#005f60] font-bold">UTH-B001-B6E2NA</strong>
+              </p>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-left flex items-start gap-3 text-xs text-amber-900">
+                <span className="text-xl">⏰</span>
+                <div>
+                  <p className="font-bold text-amber-900">Thời hạn giữ chỗ: 24 giờ</p>
+                  <p className="text-[11px] text-amber-700 mt-0.5">
+                    Vui lòng đến lấy sách trước <strong>14:02 28/08/2026</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-left text-xs space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 text-slate-600">
+                <p className="font-bold text-slate-800 mb-1">Hướng dẫn lấy sách:</p>
+                <div className="flex items-start gap-2">
+                  <span className="w-4 h-4 rounded-full bg-[#005f60] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">1</span>
+                  <span>Mang thẻ sinh viên / thẻ thư viện đến quầy tiếp nhận</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-4 h-4 rounded-full bg-[#005f60] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">2</span>
+                  <span>Yêu cầu nhân viên lấy sách tại <strong>{selectedBook.location.room} — {selectedBook.location.level}</strong></span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-4 h-4 rounded-full bg-[#005f60] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">3</span>
+                  <span>Quét mã QR hoặc đọc mã biên nhận cho nhân viên</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setShowReserveSuccessModal(false)}
+                className="w-full bg-[#005f60] hover:bg-[#004b4c] text-white py-3 rounded-xl font-bold text-xs transition shadow-md"
+              >
+                Đã hiểu, đóng lại
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/*  */}
+      {showRegisterModal && (
+        <RegisterModalForm 
+          onClose={() => setShowRegisterModal(false)} 
+          onSwitchToLogin={() => { setShowRegisterModal(false); setShowLoginModal(true); }}
+        />
+      )}
+
+      {/* */}
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 space-y-5 shadow-2xl">
+            <h3 className="text-xl font-bold text-slate-800 text-center">Đăng nhập tài khoản</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Tên đăng nhập / Mã bạn đọc</label>
+                <input type="text" placeholder="UTH2024-08342" className="w-full border border-slate-300 rounded-xl p-2.5 text-xs" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Mật khẩu</label>
+                <input type="password" placeholder="••••••••" className="w-full border border-slate-300 rounded-xl p-2.5 text-xs" />
+              </div>
+            </div>
+            <button 
+              onClick={() => { setIsLoggedIn(true); setShowLoginModal(false); }}
+              className="w-full bg-[#005f60] hover:bg-[#004b4c] text-white py-3 rounded-xl text-xs font-bold transition shadow-md"
+            >
+              Đăng nhập
+            </button>
+            <div className="text-center text-xs text-slate-500">
+              Chưa có tài khoản?{' '}
+              <button 
+                onClick={() => { setShowLoginModal(false); setShowRegisterModal(true); }}
+                className="text-[#005f60] font-bold hover:underline"
+              >
+                Đăng ký ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FOOTER */}
+      <footer className="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+        <div className="max-w-7xl mx-auto px-4 text-center space-y-2">
+          <p className="font-semibold text-slate-300">THƯ VIỆN TRƯỜNG ĐẠI HỌC GIAO THÔNG VẬN TẢI TP.HCM</p>
+          <p>Địa chỉ: Số 2, Đường Võ Oanh, Phường 25, Quận Bình Thạnh, TP. Hồ Chí Minh</p>
+          <p className="text-slate-600">© 2026 UTH Library Portal. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
 
-export default function PortalPage() {
-  const [view, setView] = useState<PortalView>("opac");
-  const [loggedIn, setLoggedIn] = useState(false);
 
-  const navItems = [
-    { key: "opac", label: "Tra cứu sách", icon: "🔍" },
-    { key: loggedIn ? "profile" : "login", label: loggedIn ? "Trang cá nhân" : "Đăng nhập", icon: loggedIn ? "👤" : "🔐" },
-  ];
+function RegisterModalForm({ onClose, onSwitchToLogin }: { onClose: () => void; onSwitchToLogin: () => void }) {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    dob: '',
+    gender: '',
+    phone: '',
+    email: '',
+    idCard: '',
+    address: '',
+    password: '',
+    confirmPassword: '',
+    captcha: ''
+  });
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-60 bg-[#0f172a] flex flex-col flex-shrink-0">
-        <div className="p-5 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            </div>
-            <div>
-              <p className="text-white text-sm font-bold leading-tight">Thư Viện</p>
-              <p className="text-slate-500 text-xs">Cổng thông tin</p>
-            </div>
-          </div>
-        </div>
-        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider px-3 py-2 mt-2">Dịch vụ</p>
-          <button onClick={() => setView("opac")} className={`sidebar-link w-full ${view === "opac" ? "active" : ""}`}>🔍 Tra cứu sách (OPAC)</button>
-          {loggedIn && (
-            <>
-              <button onClick={() => setView("profile")} className={`sidebar-link w-full ${view === "profile" ? "active" : ""}`}>👤 Thông tin cá nhân</button>
-              <button onClick={() => setView("history")} className={`sidebar-link w-full ${view === "history" ? "active" : ""}`}>📋 Lịch sử mượn trả</button>
-              <button onClick={() => setView("wishlist")} className={`sidebar-link w-full ${view === "wishlist" ? "active" : ""}`}>❤️ Sách yêu thích</button>
-            </>
-          )}
-          <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider px-3 py-2 mt-3">Tài khoản</p>
-          {!loggedIn ? (
-            <>
-              <button onClick={() => setView("login")} className={`sidebar-link w-full ${view === "login" ? "active" : ""}`}>🔐 Đăng nhập</button>
-              <button onClick={() => setView("register")} className={`sidebar-link w-full ${view === "register" ? "active" : ""}`}>✏️ Đăng ký</button>
-            </>
-          ) : (
-            <button onClick={() => { setLoggedIn(false); setView("opac"); }} className="sidebar-link w-full">🚪 Đăng xuất</button>
-          )}
-        </nav>
-      </aside>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl my-8 relative">
+        <button 
+          onClick={onClose} 
+          className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 font-bold text-lg"
+        >
+          ✕
+        </button>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
-        {/* Top bar */}
-        <div className="sticky top-0 z-10 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <span>Cổng thông tin Độc giả</span>
-            <span>›</span>
-            <span className="text-slate-800 font-medium">
-              {view === "opac" ? "Tra cứu sách" : view === "login" ? "Đăng nhập" : view === "register" ? "Đăng ký" : view === "forgot" ? "Quên mật khẩu" : view === "profile" ? "Thông tin cá nhân" : view === "history" ? "Lịch sử mượn trả" : "Sách yêu thích"}
-            </span>
-          </div>
-          {!loggedIn ? (
-            <button className="btn-primary" style={{ padding: "8px 16px", fontSize: 13 }} onClick={() => setView("login")}>Đăng nhập</button>
-          ) : (
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white text-xs font-bold">NA</div>
-              <span className="text-sm font-medium text-slate-700">Nguyễn Thị An</span>
-            </div>
-          )}
+        <h2 className="text-2xl font-bold text-center text-slate-800">Đăng ký tài khoản bạn đọc</h2>
+        <p className="text-center text-xs text-slate-500 mt-1 mb-6">Thư viện Trường Đại học GTVT TP.HCM</p>
+
+        {/* Indicator 2 bước */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition ${
+            step === 1 ? 'bg-[#005f60] text-white shadow-md' : 'bg-[#005f60] text-white'
+          }`}>
+            1
+          </span>
+          <div className={`w-12 h-0.5 transition ${step === 2 ? 'bg-[#005f60]' : 'bg-slate-200'}`} />
+          <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition ${
+            step === 2 ? 'bg-[#005f60] text-white shadow-md' : 'bg-slate-100 text-slate-400'
+          }`}>
+            2
+          </span>
         </div>
 
-        <div className="p-6">
-          {view === "opac" && <OPACSearch />}
-          {(view === "login" || view === "register" || view === "forgot") && (
+        {/* BƯỚC 1: THÔNG TIN CÁ NHÂN (ẢNH 1) */}
+        {step === 1 ? (
+          <div className="space-y-4">
+            <h3 className="font-bold text-slate-700 text-sm border-b border-slate-100 pb-2">Thông tin cá nhân</h3>
+            
             <div>
-              <AuthForm view={view} setView={(v) => {
-                if (v === "profile") { setLoggedIn(true); setView("profile"); }
-                else setView(v);
-              }} />
-              {view === "login" && (
-                <div className="max-w-md mx-auto mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700">
-                  <strong>Demo:</strong> Nhấn "Đăng nhập" để vào trang cá nhân
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Họ và tên *</label>
+              <input 
+                type="text" 
+                placeholder="Nguyễn Văn An" 
+                className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-[#005f60] focus:outline-none"
+                value={formData.fullName}
+                onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Ngày sinh *</label>
+                <input 
+                  type="date" 
+                  className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                  value={formData.dob}
+                  onChange={(e) => setFormData({...formData, dob: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Giới tính *</label>
+                <select 
+                  className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none bg-white"
+                  value={formData.gender}
+                  onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                >
+                  <option value="">Chọn giới tính</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Số điện thoại *</label>
+                <input 
+                  type="text" 
+                  placeholder="0901 234 567" 
+                  className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
+                <input 
+                  type="email" 
+                  placeholder="email@uth.edu.vn" 
+                  className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Số CCCD/CMND *</label>
+              <input 
+                type="text" 
+                placeholder="012345678901" 
+                className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                value={formData.idCard}
+                onChange={(e) => setFormData({...formData, idCard: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Địa chỉ thường trú *</label>
+              <input 
+                type="text" 
+                placeholder="123 Đường Lý Chính Thắng, Quận 3, TP.HCM" 
+                className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                value={formData.address}
+                onChange={(e) => setFormData({...formData, address: e.target.value})}
+              />
+            </div>
+
+            <button 
+              onClick={() => setStep(2)} 
+              className="w-full bg-[#005f60] hover:bg-[#004b4c] text-white py-3 rounded-xl font-bold text-xs transition mt-4 shadow-md flex items-center justify-center gap-1"
+            >
+              Tiếp theo →
+            </button>
+          </div>
+        ) : (
+          /* BƯỚC 2: THIẾT LẬP TÀI KHOẢN (ẢNH 2) */
+          <div className="space-y-4">
+            <h3 className="font-bold text-slate-700 text-sm border-b border-slate-100 pb-2">Thiết lập tài khoản</h3>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Mật khẩu *</label>
+              <input 
+                type="password" 
+                placeholder="Tối thiểu 8 ký tự" 
+                className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Xác nhận mật khẩu *</label>
+              <input 
+                type="password" 
+                placeholder="Nhập lại mật khẩu" 
+                className="w-full border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Mã xác nhận (Captcha) *</label>
+              <div className="flex gap-2">
+                <div className="bg-slate-100 border border-slate-300 rounded-xl px-4 flex items-center justify-center font-bold tracking-widest text-[#005f60] text-sm select-none border-dashed">
+                  K 7 M 2 P
                 </div>
-              )}
+                <input 
+                  type="text" 
+                  placeholder="Nhập mã" 
+                  className="flex-1 border border-slate-300 rounded-xl p-2.5 text-xs focus:outline-none"
+                  value={formData.captcha}
+                  onChange={(e) => setFormData({...formData, captcha: e.target.value})}
+                />
+              </div>
             </div>
-          )}
-          {(view === "profile" || view === "history" || view === "wishlist") && loggedIn && <ReaderProfile />}
+
+            <div className="flex gap-3 mt-6">
+              <button 
+                onClick={() => setStep(1)} 
+                className="flex-1 border border-slate-300 hover:bg-slate-50 text-slate-700 py-2.5 rounded-xl font-bold text-xs transition"
+              >
+                ← Quay lại
+              </button>
+              <button 
+                onClick={() => { alert('Đăng ký tài khoản thành công!'); onClose(); }} 
+                className="flex-1 bg-[#005f60] hover:bg-[#004b4c] text-white py-2.5 rounded-xl font-bold text-xs transition shadow-md"
+              >
+                Đăng ký
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="text-center text-xs text-slate-500 mt-6 pt-4 border-t border-slate-100">
+          Đã có tài khoản?{' '}
+          <button onClick={onSwitchToLogin} className="text-[#005f60] font-bold hover:underline">
+            Đăng nhập
+          </button>
         </div>
-      </main>
+
+      </div>
     </div>
   );
 }
-
