@@ -61,512 +61,509 @@
   	
   **2. Use-case Register Account**
   
-2.1. Tóm tắt: Cho phép khách vãng lai đăng ký tài khoản độc giả trực tuyến để gửi yêu cầu cấp thẻ thành viên mới lên hệ thống.
+2.1. Summary: Allows visitors to register for online reader accounts to send requests for new membership cards to the system.
 
-2.2. Dòng sự kiện:
+2.2. Event stream:
 
-2.2.1. Dòng sự kiện chính:
+2.2.1. Main line of events:
 
-1.	Người dùng chọn chức năng "Đăng ký tài khoản" trên giao diện OPAC.
-2.	Hệ thống yêu cầu người dùng cung cấp thông tin cá nhân: Họ tên, ngày sinh, giới tính, số điện thoại, địa chỉ email, số CCCD, địa chỉ thường trú và mật khẩu khởi tạo.
-3.	Người dùng nhập thông tin và xác nhận gửi yêu cầu.
-4.	Hệ thống kiểm tra tính hợp lệ và đối chiếu dữ liệu trùng lặp (tránh trùng Email, SĐT hoặc CCCD trong cơ sở dữ liệu D1: Readers).
-5.	Hệ thống lưu hồ sơ độc giả ở trạng thái chờ duyệt ("Pending Approval") và gửi thông báo đăng ký thành công cho người dùng.
+1. User selects "Register account" function on OPAC interface.
+2. The system requires users to provide personal information: Full name, date of birth, gender, phone number, email address, CCCD number, permanent address and initialization password.
+3. User enters information and confirms sending request.
+4. The system checks the validity and compares duplicate data (avoid duplicate Emails, Phone Numbers or CCCDs in the D1: Readers database).
+5. The system saves the reader profile in a pending approval state ("Pending Approval") and sends a notification of successful registration to the user.
 
-2.2.2. Các dòng sự kiện khác:
-  	
-o Trường hợp tên đăng nhập (email) đã tồn tại: Hệ thống hiển thị thông báo lỗi "Email này đã được sử dụng". Người dùng có thể chọn nhập lại email khác hoặc hủy bỏ đăng ký.
+2.2.2. Other event streams:
 
-o Trường hợp nhập thiếu các thông tin bắt buộc: Nếu người dùng nhập thiếu Họ tên, Email, Số điện thoại, CCCD hoặc mật khẩu dưới 6 ký tự, hệ thống báo lỗi cụ thể ở từng trường dữ liệu để người dùng sửa đổi.
+o In case the login name (email) already exists: The system displays the error message "This email is already in use". Users can choose to re-enter another email or cancel registration.
 
-2.3. Các yêu cầu đặc biệt:
+o In case of missing required information: If the user is missing Full Name, Email, Phone Number, CCCD or password of less than 6 characters, the system will report a specific error in each data field for the user to modify.
 
-o	Mật khẩu khi lưu trữ vào cơ sở dữ liệu bắt buộc phải được mã hóa một chiều sử dụng hàm băm bảo mật (Hash Function SHA-256 trở lên, tối thiểu 160 bits).
+2.3. Special requirements:
 
-o	Chức năng đăng ký trực tuyến phải tích hợp mã Captcha để chống việc làm ngập lụt dữ liệu bởi các chương trình tự động.
+o Passwords when stored in the database must be one-way encrypted using a secure hash function (Hash Function SHA-256 or higher, minimum 160 bits).
 
-2.4. Trạng thái hệ thống sau khi thực hiện Use-case: Yêu cầu đăng ký được ghi nhận thành công vào bảng Reader ở trạng thái "Pending Approval". Trạng thái dữ liệu hệ thống được cập nhật an toàn.
+o The online registration function must integrate Captcha code to prevent data flooding by automated programs.
 
+2.4. System status after performing Use-case: The registration request is successfully recorded in the Reader table in the "Pending Approval" state. System data status is updated securely.
 **3. Use-case Log In**
 
-3.1. Tóm tắt: Xác thực thông tin đăng nhập của người dùng (Độc giả, Thủ thư, Quản trị viên) để cấp quyền truy cập chức năng tương ứng trong hệ thống.
+3.1. Summary: Authenticate user credentials (Reader, Librarian, Administrator) to grant access to corresponding system functions.
 
-3.2. Dòng sự kiện:
+3.2. Flow of events:
 
-3.2.1. Dòng sự kiện chính:
+3.2.1. Main flow:
 
-1.	Người dùng truy cập trang đăng nhập và cung cấp tên đăng nhập (Email) cùng mật khẩu.
-2.	Người dùng nhấn nút xác nhận "Đăng nhập".
-3.	Hệ thống tiến hành mã hóa mật khẩu người dùng vừa nhập và so khớp với thông tin đã được mã hóa trong cơ sở dữ liệu (D1: Readers, D5: Staffs, hoặc Admin).
-4.	Nếu khớp thông tin, hệ thống cho phép đăng nhập và chuyển hướng người dùng tới giao diện làm việc tương ứng với vai trò đã được phân quyền.
-   
-3.2.2. Các dòng sự kiện khác:
+1.	The user accesses the login page and provides their username (Email) and password.
+2.	The user clicks the "Log In" button.
+3.	The system encrypts the entered password and compares it with the encrypted data stored in the database (D1: Readers, D5: Staff, or Admin).
+4.	If the information matches, the system grants access and redirects the user to the interface corresponding to their assigned role.
 
-o	Trường hợp tên đăng nhập hoặc mật khẩu bị sai: Hệ thống hiển thị thông báo lỗi "Tên đăng nhập hoặc mật khẩu không chính xác" (không chỉ rõ sai ở trường nào để tăng tính bảo mật). Người dùng nhập lại hoặc hủy giao dịch.
+3.2.2. Alternative flows:
 
-3.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Người dùng ở trạng thái chưa đăng nhập vào hệ thống.
+o	Incorrect username or password: The system displays an error message stating "Incorrect username or password" (without specifying which field is incorrect to enhance security). The user may re-enter the credentials or cancel the operation.
 
-3.4. Trạng thái hệ thống sau khi thực hiện Use-case: Người dùng đăng nhập thành công và được cấp Token xác thực quyền truy cập cho phiên làm việc hiện tại.
+3.3. System state prior to Use-case execution: The user is not logged into the system.
 
-3.5. Điểm mở rộng:
+3.4. System state after Use-case execution: The user has successfully logged in and been issued an authentication token for the current session.
 
-o	Use-case Recover Password: Người dùng có thể chọn chuyển sang chức năng "Quên mật khẩu" nếu không nhớ mật khẩu đăng nhập của mình.
+3.5. Extension points:
+
+o	Recover Password Use-case: The user can choose to switch to the "Forgot Password" function if they do not remember their login password.
 
 **4. Use-case Recover Password**
 
-4.1. Tóm tắt: Cho phép người dùng lấy lại quyền truy cập tài khoản khi quên mật khẩu thông qua email cá nhân đã đăng ký.
+4.1. Summary: Allows users to regain account access after forgetting their password by using their registered personal email address.
 
-4.2. Dòng sự kiện:
+4.2. Flow of events:
 
-4.2.1. Dòng sự kiện chính:
+4.2.1. Main flow:
 
-1.	Người dùng chọn chức năng "Quên mật khẩu" từ màn hình đăng nhập.
-2.	Hệ thống yêu cầu người dùng cung cấp địa chỉ email tài khoản đã đăng ký trên hệ thống.
-3.	Hệ thống kiểm tra sự tồn tại của email trong cơ sở dữ liệu.
-4.	Nếu email tồn tại, hệ thống tự động sinh một chuỗi mật khẩu ngẫu nhiên mới, cập nhật vào bảng dữ liệu tương ứng của người dùng, và đồng thời gửi email chứa mật khẩu mới này tới hòm thư của người dùng.
-5.	Hệ thống hiển thị thông báo yêu cầu người dùng kiểm tra hòm thư cá nhân để nhận mật khẩu mới.
-   
-4.2.2. Các dòng sự kiện khác:
+1.	The user selects the "Forgot Password" function from the login screen.
+2.	The system prompts the user to provide the email address associated with their registered account.
+3.	The system checks the database for the existence of the email.
+4.	If the email exists, the system automatically generates a new random password, updates the user's record in the database, and simultaneously sends an email containing the new password to the user's inbox.
+5.	The system displays a notification asking the user to check their personal email for the new password.
 
-o	Trường hợp email không tồn tại trên hệ thống: Hệ thống thông báo lỗi "Địa chỉ email không tồn tại trên hệ thống". Người dùng nhập lại email hoặc thoát chức năng.
+4.2.2. Alternative flows:
 
-4.3. Các yêu cầu đặc biệt: Mật khẩu mới phải được sinh hoàn toàn ngẫu nhiên bởi thuật toán mã hóa bảo mật của hệ thống và lập tức mã hóa băm trước khi lưu vào DB.
+o	If the email does not exist in the system: The system displays an error message: "Email address does not exist in the system." The user may re-enter the email or exit the function.
 
-4.4. Trạng thái hệ thống sau khi thực hiện Use-case: Mật khẩu cũ của tài khoản bị vô hiệu hóa, mật khẩu ngẫu nhiên mới được cập nhật vào cơ sở dữ liệu.
+4.3. Special requirements: The new password must be generated completely at random using the system's secure encryption algorithm and immediately hashed before being stored in the database.
+
+4.4. System state after Use-case execution: The account's old password is invalidated, and the new random password is updated in the database.
 
 **5. Use-case View Personal Information**
 
-5.1. Tóm tắt: Người dùng (Độc giả, Thủ thư, Quản trị viên) truy cập để xem chi tiết thông tin cá nhân và lịch sử hoạt động cá nhân trong hệ thống.
+5.1. Summary: Users (Readers, Librarians, Administrators) access the system to view their personal details and activity history.
 
-5.2. Dòng sự kiện:
+5.2. Flow of Events:
 
-5.2.1. Dòng sự kiện chính:
+5.2.1. Main Flow:
 
-1.	Người dùng nhấp chọn chức năng "Trang cá nhân" hoặc "Xem thông tin tài khoản".
-2.	Hệ thống kiểm tra vai trò của người dùng hiện tại và truy vấn chi tiết hồ sơ từ bảng tương ứng (Reader, Staff, hoặc Admin).
-3.	Hệ thống hiển thị thông tin chi tiết: Họ tên, ngày sinh, SĐT, email, địa chỉ, ngày tạo tài khoản, và lịch sử mượn trả (đối với độc giả) hoặc lịch sử hoạt động ca trực (đối với thủ thư).
-   
-5.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Người dùng phải ở trạng thái đã đăng nhập vào hệ thống thành công.
+1.	The user selects the "Profile" or "View Account Information" function.
+2.	The system checks the current user's role and queries profile details from the corresponding table (Reader, Staff, or Admin).
+3.	The system displays detailed information: full name, date of birth, phone number, email, address, account creation date, and borrowing/returning history (for readers) or shift activity history (for librarians).
+
+5.3. System state prior to Use-case execution: The user must be successfully logged into the system.
 
 **6. Use-case View Registration Requests**
 
-6.1. Tóm tắt: Cho phép thủ thư hoặc quản trị viên duyệt xem danh sách các hồ sơ đăng ký độc giả trực tuyến đang ở trạng thái chờ duyệt.
+6.1. Summary: Allows a librarian or administrator to view a list of online reader registration applications currently awaiting approval.
 
-6.2. Dòng sự kiện:
+6.2. Flow of Events:
 
-6.2.1. Dòng sự kiện chính:
+6.2.1. Main Flow:
 
-1.	Thủ thư chọn chức năng "Duyệt yêu cầu đăng ký thẻ" trên bảng điều khiển.
-2.	Hệ thống truy xuất cơ sở dữ liệu và hiển thị danh sách các hồ sơ đăng ký tài khoản độc giả đang có trạng thái "Pending Approval" theo thứ tự thời gian đăng ký mới nhất nằm trước.
-3.	Thủ thư có thể nhấp vào từng hồ sơ để kiểm tra chi tiết các trường thông tin cá nhân và tài liệu đính kèm (nếu có).
-   
-6.3. Các yêu cầu đặc biệt: Danh sách hiển thị yêu cầu đăng ký phải được phân trang để tối ưu hóa hiệu suất tải trang khi số lượng yêu cầu lớn.
+1.	The librarian selects the "Approve Card Registration Request" function on the dashboard.
+2.	The system queries the database and displays a list of reader account registration applications with the status "Pending Approval," sorted chronologically with the most recent applications appearing first.
+3.	The librarian can click on individual applications to review details regarding personal information fields and attached documents (if any).
 
-6.4. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Thủ thư hoặc Quản trị viên đang ở trạng thái đã đăng nhập thành công vào hệ thống.
+6.3. Special Requirements: The list of registration requests must be paginated to optimize page loading performance when the volume of requests is high.
 
-6.5. Điểm mở rộng:
+6.4. System State Prior to Use Case Execution: The librarian or administrator is successfully logged into the system.
 
-o	Use-case Approve Reader Card Issue: Thủ thư nhấp chọn duyệt một hồ sơ hợp lệ từ danh sách chờ để tiến hành cấp thẻ và kích hoạt tài khoản chính thức.
+6.5. Extension Points:
+
+o	Use Case: Approve Reader Card Issuance – The librarian selects and approves a valid application from the pending list to proceed with card issuance and official account activation.
 
 **7. Use-case Approve Reader Card Issue**
 
-7.1. Tóm tắt: Phê duyệt một yêu cầu đăng ký tài khoản hợp lệ, kích hoạt thẻ thư viện và sinh mã QR định danh gửi cho độc giả.
+7.1. Summary: Approve a valid account registration request, activate the library card, and generate an identification QR code to send to the reader.
 
-7.2. Dòng sự kiện:
+7.2. Flow of Events:
 
-7.2.1. Dòng sự kiện chính:
+7.2.1. Main Flow:
 
-1.	Thủ thư chọn hồ sơ độc giả cần phê duyệt từ danh sách yêu cầu chờ duyệt.
-2.	Thủ thư nhấn nút "Phê duyệt cấp thẻ".
-3.	Hệ thống tạo mã độc giả duy nhất (ReaderID) và tự động sinh mã vạch/mã QR định danh đại diện cho thẻ thư viện của độc giả.
-4.	Hệ thống cập nhật trạng thái tài khoản độc giả từ "Pending Approval" sang "Active", thiết lập ngày bắt đầu và ngày hết hạn cho thẻ thư viện theo cấu hình quy định.
-5.	Hệ thống gửi email xác nhận phê duyệt kèm hình ảnh mã QR thẻ thành viên về email độc giả.
-6.	Hệ thống hiển thị thông báo phê duyệt thành công.
-   
-7.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Thủ thư đang ở giao diện xem chi tiết hồ sơ đăng ký của độc giả.
+1.	The librarian selects the reader profile requiring approval from the list of pending requests.
+2.	The librarian clicks the "Approve Card Issuance" button.
+3.	The system generates a unique reader ID (ReaderID) and automatically creates a barcode/identification QR code representing the reader's library card.
+4.	The system updates the reader account status from "Pending Approval" to "Active" and sets the start and expiration dates for the library card according to established configurations.
+5.	The system sends an approval confirmation email containing the membership card QR code image to the reader's email address.
+6.	The system displays a notification indicating successful approval.
 
-7.4. Trạng thái hệ thống sau khi thực hiện Use-case: Tài khoản độc giả chuyển sang trạng thái "Active" trong cơ sở dữ liệu, thẻ thư viện được kích hoạt thành công.
+7.3. System state prior to Use-case execution: The librarian is viewing the details of the reader's registration profile.
+
+7.4. System state after Use-case execution: The reader account status changes to "Active" in the database, and the library card is successfully activated.
 
 **8. Use-case Search Books**
 
-8.1. Tóm tắt: Cho phép mọi đối tượng (Khách vãng lai, Độc giả, Thủ thư) tìm kiếm thông tin về tài liệu thư viện theo các tiêu chí đa dạng.
+8.1. Summary: Allows all user types (Visitors, Readers, Librarians) to search for library materials based on various criteria.
 
-8.2. Dòng sự kiện:
+8.2. Flow of Events:
 
-8.2.1. Dòng sự kiện chính:
+8.2.1. Main Flow:
 
-1.	Người dùng chọn chức năng tìm kiếm tài liệu trên thanh công cụ tìm kiếm.
-2.	Người dùng nhập từ khóa tìm kiếm (Tựa sách, Tác giả, Thể loại, hoặc mã sách) và có thể tùy chọn bộ lọc nâng cao (Năm xuất bản, Nhà xuất bản, Ngôn ngữ).
-3.	Hệ thống truy vấn cơ sở dữ liệu D2: Books & BookCopies để tìm kiếm các bản ghi chứa từ khóa tương ứng.
-4.	Hệ thống hiển thị danh sách các kết quả tìm thấy gồm: Ảnh bìa, Tên sách, Tác giả, Thể loại, và số lượng bản sao khả dụng hiện có trên kệ thư viện.
-5.	Người dùng có thể chọn sắp xếp danh sách kết quả (theo bảng chữ cái, ngày nhập, hoặc số lượt mượn) hoặc nhấn chọn xem chi tiết để xem tóm tắt nội dung và vị trí kệ sách.
-   
-8.3. Các yêu cầu đặc biệt: Kết quả tìm kiếm phải hiển thị tức thời (thời gian phản hồi dưới 2 giây đối với cơ sở dữ liệu lớn lên tới 100.000 đầu sách) và hỗ trợ tìm kiếm không dấu/gần đúng.
+1.	The user selects the material search function from the search toolbar.
+2.	The user enters search keywords (Title, Author, Genre, or book code) and may optionally apply advanced filters (Publication Year, Publisher, Language).
+3.	The system queries the D2 database (Books & BookCopies) to find records matching the keywords.
+4.	The system displays a list of results, including: cover image, title, author, genre, and the number of copies currently available on the library shelves.
+5.	The user can choose to sort the results list (alphabetically, by entry date, or by loan count) or select an item to view details, such as the content summary and shelf location.
 
-8.4. Điểm mở rộng:
+8.3. Special Requirements: Search results must be displayed instantly (response time under 2 seconds for a database of up to 100,000 titles), and the system must support searches without diacritics and approximate (fuzzy) matching.
 
-o	Use-case Reserve Book: Độc giả có tài khoản chính thức có thể tiến hành đặt giữ chỗ sách từ giao diện chi tiết sách.
+8.4. Extension Points:
 
-o	Use-case Add to Online Wishlist: Độc giả chọn lưu sách vào danh sách quan tâm cá nhân.
+o	Reserve Book Use Case: Readers with an official account can place a reservation for a book from the book details interface.
+
+o	Add to Online Wishlist Use Case: Readers can choose to save a book to their personal wishlist.
 
 **9. Use-case Reserve Book**
 
-9.1. Tóm tắt: Cho phép độc giả đã đăng nhập đặt giữ trước một bản sao sách đang khả dụng trên kệ trước khi đến thư viện mượn trực tiếp, tránh trường hợp sách bị người khác mượn mất.
+9.1. Summary: Allows logged-in patrons to place a hold on a book copy currently available on the shelf before visiting the library to borrow it in person, preventing it from being borrowed by someone else.
 
-9.2. Dòng sự kiện:
+9.2. Flow of events:
 
-9.2.1. Dòng sự kiện chính:
+9.2.1. Main flow:
 
-1.	Độc giả chọn chức năng "Đặt giữ chỗ" tại trang thông tin chi tiết của cuốn sách muốn mượn.
-2.	Hệ thống kiểm tra điều kiện tài khoản của độc giả: Tài khoản phải ở trạng thái "Active", thẻ thư viện không bị hết hạn, không có nợ phạt quá hạn chưa thanh toán, và tổng số lượng sách đang mượn cộng số sách đang đặt giữ chưa vượt quá giới hạn tối đa cho phép.
-3.	Hệ thống kiểm tra sự khả dụng của bản sao sách vật lý trên kệ.
-4.	Nếu đáp ứng đầy đủ điều kiện, hệ thống chuyển trạng thái của bản sao sách đó từ "Available" sang "Reserved" và thiết lập thời hạn tạm giữ chỗ (ví dụ: tối đa 24 giờ kể từ thời điểm đặt giữ).
-5.	Hệ thống lưu thông tin đặt giữ chỗ và sinh mã xác nhận QR Code gửi về ứng dụng di động/email của độc giả.
-   
-9.2.2. Các dòng sự kiện khác:
-  	
-o	Trường hợp tài khoản độc giả bị khóa hoặc thẻ hết hạn: Hệ thống từ chối thực hiện giao dịch và hiển thị thông báo lý do cụ thể.
+1.	The patron selects the "Place Hold" function on the details page of the book they wish to borrow.
+2.	The system checks the patron's account eligibility: The account must be "Active," the library card must not be expired, there must be no outstanding overdue fines, and the total number of currently borrowed books plus books on hold must not exceed the maximum allowed limit.
+3.	The system checks the availability of the physical book copy on the shelf.
+4.	If all conditions are met, the system changes the book copy's status from "Available" to "Reserved" and sets a hold expiration time (e.g., a maximum of 24 hours from the time the hold was placed).
+5.	The system saves the hold information and generates a confirmation QR code, sending it to the patron's mobile app or email.
 
-o	Trường hợp độc giả đang giữ sách trễ hạn hoặc có nợ phạt chưa thanh toán: Hệ thống hiển thị thông báo từ chối đặt giữ chỗ và yêu cầu độc giả giải quyết nợ phạt tại quầy trước khi thực hiện giao dịch mới.
+9.2.2. Alternative flows:
 
-9.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Độc giả đang ở trạng thái đã đăng nhập và đang xem chi tiết thông tin cuốn sách muốn đặt giữ chỗ.
+o	If the patron's account is locked or the card is expired: The system rejects the transaction and displays a notification stating the specific reason.
 
-9.4. Trạng thái hệ thống sau khi thực hiện Use-case: Trạng thái bản sao cuốn sách được cập nhật thành "Reserved" trong cơ sở dữ liệu, ghi nhận lịch sử đặt giữ thành công.
+o	If the patron has overdue borrowed books or unpaid fines: The system displays a notification rejecting the hold request and asks the patron to settle the fines at the counter before initiating a new transaction.
+
+9.3. System state before the use case begins: The patron is logged in and viewing the details of the book they wish to place on hold.
+
+9.4. System state after the use case is completed: The book copy status is updated to "Reserved" in the database, and the successful hold is recorded in the history.
 
 **10. Use-case Add to Online Wishlist**
 
-10.1. Tóm tắt: Cho phép độc giả lưu các tựa sách yêu thích hoặc cần tham khảo trong tương lai vào một danh sách cá nhân trực tuyến.
+10.1. Summary: Allows readers to save favorite titles or those needed for future reference to a personal online list.
 
-10.2. Dòng sự kiện:
+10.2. Flow of events:
 
-10.2.1. Dòng sự kiện chính:
+10.2.1. Main flow:
 
-1.	Độc giả nhấn nút "Thêm vào danh sách quan tâm" tại trang chi tiết đầu sách.
-2.	Hệ thống ghi nhận liên kết giữa ReaderID và BookID tương ứng.
-3.	Hệ thống cập nhật danh sách Wishlist cá nhân trực tuyến của độc giả đó và hiển thị thông báo "Đã lưu vào danh sách quan tâm".
-   
-10.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Độc giả đã đăng nhập thành công vào hệ thống.
-  	
-10.4. Trạng thái hệ thống sau khi thực hiện Use-case: Đầu sách được thêm thành công vào danh sách quan tâm cá nhân trực tuyến của độc giả.
+1.	The reader clicks the "Add to Wishlist" button on the book details page.
+2.	The system records the association between the ReaderID and the corresponding BookID.
+3.	The system updates the reader's personal online Wishlist and displays the notification "Saved to Wishlist".
+
+10.3. System state prior to Use-case execution: The reader has successfully logged into the system.
+
+10.4. System state after Use-case execution: The book title has been successfully added to the reader's personal online Wishlist.
 
 **11. Use-case Remove from Online Wishlist**
 
-11.1. Tóm tắt: Cho phép độc giả xóa bỏ các tựa sách không còn nhu cầu quan tâm ra khỏi danh sách wishlist cá nhân trực tuyến.
+11.1. Summary: Allows readers to remove book titles they are no longer interested in from their personal online wishlist.
 
-11.2. Dòng sự kiện:
+11.2. Flow of Events:
 
-11.2.1. Dòng sự kiện chính:
+11.2.1. Main Flow:
 
-1.	Độc giả truy cập trang "Danh sách quan tâm của tôi".
-2.	Hệ thống hiển thị toàn bộ danh sách các tựa sách đã lưu.
-3.	Độc giả nhấn nút biểu tượng "Xóa" hoặc "Bỏ quan tâm" bên cạnh tựa sách tương ứng.
-4.	Hệ thống xóa liên kết bản ghi lưu trữ tương ứng trong cơ sở dữ liệu.
-5.	Hệ thống tải lại trang danh sách sau khi đã xóa và hiển thị thông báo cập nhật thành công.
-   
-11.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Độc giả đã đăng nhập thành công và đang ở giao diện xem danh sách quan tâm cá nhân.
+1.	The reader accesses the "My Wishlist" page.
+2.	The system displays the full list of saved book titles.
+3.	The reader clicks the "Delete" or "Remove" icon/button next to the corresponding book title.
+4.	The system deletes the corresponding record link in the database.
+5.	The system reloads the list page and displays a success notification.
 
-11.4. Trạng thái hệ thống sau khi thực hiện Use-case: Tựa sách được loại bỏ thành công ra khỏi danh sách quan tâm cá nhân, trạng thái cơ sở dữ liệu được cập nhật.
+11.3. System State Before Use Case Execution: The reader has successfully logged in and is viewing their personal wishlist.
+
+11.4. System State After Use Case Execution: The book title has been successfully removed from the personal wishlist, and the database state has been updated.
 
 **12. Use-case Process Borrowing**
 
-12.1. Tóm tắt: Nghiệp vụ cốt lõi tại quầy cho phép thủ thư tiếp nhận yêu cầu, kiểm tra ràng buộc và lập phiếu mượn sách vật lý cho độc giả.
+12.1. Summary: The core circulation desk function allows the librarian to receive requests, verify constraints, and create physical book loan records for patrons.
 
-12.2. Dòng sự kiện:
+12.2. Flow of Events:
 
-12.2.1. Dòng sự kiện chính:
+12.2.1. Main Flow:
 
-1.	Độc giả trình thẻ thư viện và sách cần mượn tại quầy dịch vụ.
-2.	Thủ thư khởi động chức năng "Lập phiếu mượn sách" trên phần mềm.
-3.	Thủ thư thực hiện quét mã QR/mã vạch thẻ thư viện của độc giả.
-4.	Hệ thống tự động xác thực trạng thái thẻ thư viện (Verify Reader Card).
-5.	Sau khi thẻ được xác nhận hợp lệ, thủ thư sử dụng máy quét mã vạch để quét mã vạch (CopyID) dán trên từng cuốn sách vật lý cần mượn.
-6.	Hệ thống kiểm tra tính khả dụng của từng bản sao sách trong kho dữ liệu và đối chiếu các giới hạn mượn sách của độc giả (không được vượt quá số lượng sách quy định tối đa).
-7.	Thủ thư kiểm tra thông tin hiển thị trên màn hình và nhấn "Xác nhận mượn".
-8.	Hệ thống khởi tạo một giao dịch mượn mới trong DB: tạo bản ghi BorrowRecord (gồm ID giao dịch, mã độc giả, ngày mượn, mã thủ thư thực hiện) và tạo các bản ghi chi tiết BorrowDetail tương ứng với từng cuốn sách mượn (đặt DueDate là 14 ngày kể từ ngày mượn theo chính sách chung).
-9.	Hệ thống cập nhật trạng thái của các bản sao sách trong bảng BookCopy từ "Available" sang "On borrow" và đồng thời trừ số lượng tồn kho sách khả dụng.
-    
-12.3. Các yêu cầu đặc biệt: Toàn bộ quá trình quét mã và xử lý giao dịch mượn sách phải đảm bảo tính toàn vẹn dữ liệu (sử dụng cơ chế Transaction để nếu một dòng mượn chi tiết lỗi thì rollback toàn bộ giao dịch để tránh rác dữ liệu). Thời gian phản hồi quét mã vạch phải dưới 1.5 giây.
+1.	The patron presents their library card and the books to be borrowed at the service desk.
+2.	The librarian initiates the "Create Loan Record" function in the software.
+3.	The librarian scans the patron's library card QR code or barcode.
+4.	The system automatically verifies the library card status.
+5.	Once the card is validated, the librarian uses a barcode scanner to scan the barcode (CopyID) affixed to each physical book being borrowed.
+6.	The system checks the availability of each book copy in the database and verifies the patron's borrowing limits (ensuring the maximum allowed quantity is not exceeded).
+7.	The librarian reviews the information displayed on the screen and clicks "Confirm Loan."
+8.	The system initiates a new loan transaction in the database: it creates a `BorrowRecord` (containing the transaction ID, patron ID, loan date, and processing librarian ID) and creates `BorrowDetail` records corresponding to each borrowed book (setting the `DueDate` to 14 days from the loan date, per general policy).
+9.	The system updates the status of the book copies in the `BookCopy` table from "Available" to "On borrow" and simultaneously decrements the available stock count.
 
-12.4. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Thủ thư đã đăng nhập vào hệ thống thành công và đang làm việc tại màn hình lập phiếu mượn.
+12.3. Special Requirements: The entire process of scanning codes and processing loan transactions must ensure data integrity (utilizing a transaction mechanism so that if a single loan detail fails, the entire transaction is rolled back to prevent data inconsistency). The barcode scanning response time must be less than 1.5 seconds.
 
-12.5. Trạng thái hệ thống sau khi thực hiện Use-case: Phiếu mượn được khởi tạo thành công, dữ liệu trạng thái sách và giới hạn của độc giả được cập nhật tức thời trong cơ sở dữ liệu.
+12.4. System state prior to Use-case execution: The librarian has successfully logged into the system and is working on the loan slip creation screen.
 
-12.6. Điểm mở rộng:
+12.5. System state after Use-case execution: The loan slip has been successfully created; book status data and the patron's borrowing limits have been instantly updated in the database.
 
-o	Use-case Print Receipt: Hệ thống tự động chuyển sang luồng in phiếu mượn vật lý để độc giả ký xác nhận sau khi giao dịch mượn hoàn thành.
+12.6. Extension point:
+
+o	Print Receipt Use-case: The system automatically proceeds to the physical loan slip printing flow for the patron to sign and confirm after the borrowing transaction is completed.
 
 **13. Use-case Verify Reader Card**
 
-13.1. Tóm tắt: Hệ thống tự động rà soát, kiểm tra tính hợp lệ và các ràng buộc vi phạm của thẻ thư viện độc giả trước khi cho phép tiến hành các giao dịch lưu thông tiếp theo.
+13.1. Summary: The system automatically reviews and checks the validity and potential constraint violations of the reader's library card before allowing subsequent circulation transactions to proceed.
 
-13.2. Dòng sự kiện:
+13.2. Flow of events:
 
-13.2.1. Dòng sự kiện chính:
+13.2.1. Main flow:
 
-1.	Hệ thống nhận mã định danh ReaderID từ luồng xử lý mượn sách/gia hạn sách.
-2.	Hệ thống kiểm tra thời hạn của thẻ độc giả (CardExpiryDate) so với ngày hiện tại.
-3.	Hệ thống kiểm tra trạng thái hoạt động của thẻ trong DB (phải là "Active").
-4.	Hệ thống đếm số lượng sách độc giả đang mượn thực tế chưa trả trong bảng BorrowDetail để đối chiếu với hạn mức mượn tối đa được phép theo phân loại đối tượng độc giả (Sinh viên, Giảng viên).
-5.	Hệ thống kiểm tra xem độc giả có cuốn sách nào đang ở trạng thái mượn quá hạn (trễ ngày trả hẹn trước) hoặc đang có hóa đơn phạt vi phạm ở trạng thái chưa nộp tiền ("Pending Payment") hay không.
-6.	Nếu tất cả đều hợp lệ, hệ thống trả về kết quả xác thực thành công và hiển thị thông tin tóm tắt của độc giả lên giao diện thủ thư.
-   
-13.2.2. Các dòng sự kiện khác:
+1.	The system receives the ReaderID from the book borrowing or renewal process.
+2.	The system checks the reader card's expiration date (CardExpiryDate) against the current date.
+3.	The system checks the card's operational status in the database (it must be "Active").
+4.	The system counts the number of books currently borrowed and unreturned by the reader (using the BorrowDetail table) and compares this against the maximum borrowing limit allowed for the reader's category (e.g., Student, Faculty).
+5.	The system checks if the reader has any overdue books (past the due date) or any outstanding penalty invoices marked as "Pending Payment."
+6.	If all checks pass, the system returns a successful validation result and displays a summary of the reader's information on the librarian's interface.
 
-o	Trường hợp thẻ hết hạn sử dụng hoặc bị khóa tạm thời: Hệ thống phát âm thanh cảnh báo và hiển thị thông báo lỗi chi tiết lý do từ chối lên màn hình của thủ thư. Use-case kết thúc.
+13.2.2. Alternative flows:
 
-o	Trường hợp độc giả đang giữ sách quá hạn hoặc có công nợ phạt chưa thanh toán: Hệ thống thông báo lỗi vi phạm chính sách lưu thông và chặn quyền mượn sách mới của độc giả đó cho đến khi giải quyết xong vi phạm.
+o	If the card is expired or temporarily blocked: The system emits a warning sound and displays an error message detailing the reason for rejection on the librarian's screen. The use case terminates.
 
-13.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Hệ thống nhận được thông tin đầu vào là mã thẻ thư viện độc giả từ một tiến trình lưu thông.
+o	If the reader holds overdue books or has unpaid penalties: The system reports a circulation policy violation and blocks the reader from borrowing new books until the violation is resolved.
+
+13.3. System state prior to use case execution: The system has received the reader's library card ID as input from a circulation process.
 
 **14. Use-case View Borrowing History**
 
-14.1. Tóm tắt: Cho phép độc giả tra cứu lại toàn bộ lịch sử các giao dịch mượn trả tài liệu của mình thông qua tài khoản OPAC trực tuyến.
+14.1. Summary: Allows the reader to view their complete borrowing and return history via their online OPAC account.
 
-14.2. Dòng sự kiện:
+14.2. Flow of Events:
 
-14.2.1. Dòng sự kiện chính:
+14.2.1. Main Flow:
 
-1.	Độc giả nhấp chọn chức năng "Lịch sử mượn sách" tại trang quản trị tài khoản cá nhân.
-2.	Hệ thống truy vấn bảng BorrowRecord và BorrowDetail lọc theo mã ReaderID của độc giả đang đăng nhập.
-3.	Hệ thống hiển thị danh sách toàn bộ các giao dịch mượn sách theo thứ tự thời gian từ mới nhất đến cũ nhất. Thông tin hiển thị cho từng cuốn sách bao gồm: Tên sách, Ngày mượn, Ngày hẹn trả, Ngày trả thực tế (nếu có), trạng thái sách (Đang mượn, Đã trả, Trả trễ hạn) và số tiền phạt phát sinh (nếu có).
-   
-14.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Độc giả đã đăng nhập thành công vào hệ thống.
+1.	The reader selects the "Borrowing History" function on their personal account management page.
+2.	The system queries the `BorrowRecord` and `BorrowDetail` tables, filtering by the `ReaderID` of the currently logged-in reader.
+3.	The system displays a list of all borrowing transactions, sorted chronologically from newest to oldest. Information displayed for each book includes: Title, Borrow Date, Due Date, Actual Return Date (if applicable), status (On Loan, Returned, Overdue), and any incurred fines.
 
-14.4. Điểm mở rộng:
+14.3. System State Prior to Use-Case Execution: The reader has successfully logged into the system.
 
-o	Use-case Renew Books Online: Độc giả có thể nhấp chọn nút "Gia hạn" trực tuyến ngay bên cạnh những đầu sách có trạng thái "Đang mượn" và đủ điều kiện gia hạn.
+14.4. Extension Points:
+
+o	"Renew Books Online" Use-Case: The reader can click the "Renew" button next to any book currently "On Loan" that is eligible for renewal.
 
 **15. Use-case Renew Books Online**
 
-15.1. Tóm tắt: Độc giả tự thực hiện gia hạn thêm thời gian mượn sách trực tuyến qua giao diện ứng dụng di động/web mà không cần mang sách trực tiếp đến thư viện.
+15.1. Summary: Readers can renew their book loans online via the mobile app or web interface without needing to bring the books to the library in person.
 
-15.2. Dòng sự kiện:
+15.2. Flow of events:
 
-15.2.1. Dòng sự kiện chính:
+15.2.1. Main flow:
 
-1.	Độc giả truy cập màn hình hiển thị danh sách sách đang mượn.
-2.	Độc giả nhấn nút "Gia hạn trực tuyến" bên cạnh cuốn sách đang mượn muốn gia hạn.
-3.	Hệ thống tự động tiến hành kiểm tra một loạt ràng buộc gia hạn:
-o	Cuốn sách này không nằm trong danh sách đang được đặt giữ chỗ trước (Reserved) bởi một độc giả khác trong hệ thống.
-o	Tài khoản của độc giả không bị khóa, không có bất kỳ sách nào khác đang mượn bị quá hạn và không có nợ phạt chưa thanh toán.
-o	Số lần gia hạn thực tế của cuốn sách này chưa vượt quá hạn mức tối đa cho phép của thư viện (tối đa không quá 4 lần liên tiếp cho 1 đầu sách).
-4.	Nếu đáp ứng đầy đủ điều kiện, hệ thống cập nhật ngày hẹn trả mới (DueDate) cho dòng chi tiết phiếu mượn tương ứng (ngày hẹn trả mới được cộng thêm 14 ngày kể từ ngày hẹn trả cũ), cập nhật số lần gia hạn tăng lên 1 đơn vị.
-5.	Hệ thống hiển thị thông báo "Gia hạn thành công" kèm theo thông tin hiển thị ngày hẹn trả mới rõ ràng cho độc giả.
-   
-**15.2.2. Các dòng sự kiện khác:**
+1.	The reader accesses the screen displaying the list of currently borrowed books.
+2.	The reader clicks the "Renew Online" button next to the specific book they wish to renew.
+3.	The system automatically checks a series of renewal constraints:
+o	The book is not currently reserved by another reader in the system.
+o	The reader's account is not locked, there are no other overdue borrowed books, and there are no outstanding fines.
+o	The number of renewals for this book has not exceeded the library's maximum limit (maximum of 4 consecutive renewals per title).
+4.	If all conditions are met, the system updates the new due date for the corresponding loan record (the new due date is set to 14 days after the original due date) and increments the renewal count by one.
+5.	The system displays a "Renewal Successful" notification, clearly showing the new due date to the reader.
 
-o	Trường hợp sách có người đặt giữ hoặc vi phạm các ràng buộc: Hệ thống hiển thị thông báo từ chối gia hạn kèm theo lý do cụ thể (ví dụ: "Sách đã có người đặt trước" hoặc "Bạn đã vượt quá số lần gia hạn cho phép"). Ngày hẹn trả cũ của sách giữ nguyên.
+15.2.2. Alternative flows:
 
-15.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Độc giả đã đăng nhập thành công và đang ở giao diện quản lý lịch sử sách đang mượn.
+o	If the book is reserved by someone else or renewal constraints are violated: The system displays a renewal rejection notification with the specific reason (e.g., "Book is already reserved" or "You have exceeded the allowed number of renewals"). The book's original due date remains unchanged.
 
-15.4. Trạng thái hệ thống sau khi thực hiện Use-case: Ngày hẹn trả của sách mượn được cập nhật lùi lại 14 ngày trong cơ sở dữ liệu, lịch sử giao dịch được ghi nhận trạng thái mới.
+15.3. System state prior to Use-case execution: The reader has successfully logged in and is currently on the interface for managing their borrowed book history. 
+15.4. System state after Use-case execution: The due date for the borrowed book is updated to 14 days later in the database, and the transaction history records the new status.
 
 **16. Use-case Over-the-Counter Renewal**
 
-16.1. Tóm tắt: Thủ thư tiếp nhận yêu cầu và xử lý gia hạn thời gian mượn sách trực tiếp cho độc giả tại quầy lưu thông.
+16.1. Summary: The librarian receives the request and processes the book loan extension directly for the patron at the circulation desk.
 
-16.2. Dòng sự kiện:
+16.2. Flow of Events:
 
-16.2.1. Dòng sự kiện chính:
+16.2.1. Main Flow:
 
-1.	Độc giả mang sách hoặc thẻ đến quầy yêu cầu gia hạn ngày trả.
-2.	Thủ thư quét thẻ thư viện độc giả để xác thực hồ sơ hoạt động.
-3.	Thủ thư quét mã vạch của cuốn sách độc giả muốn gia hạn.
-4.	Hệ thống thực hiện kiểm tra các ràng buộc nghiệp vụ tương tự quy trình online (cuốn sách không có người đặt giữ trước, độc giả không có sách quá hạn khác, số lần gia hạn chưa vượt quá 4 lần).
-5.	Thủ thư nhấn nút "Xác nhận gia hạn tại quầy".
-6.	Hệ thống thực hiện giao dịch cập nhật ngày hẹn trả mới dời thêm 14 ngày vào bảng BorrowDetail của cơ sở dữ liệu.
-7.	Hệ thống thông báo kết quả gia hạn thành công lên màn hình thủ thư.
-   
-16.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Thủ thư đã đăng nhập và đang ở giao diện xử lý nghiệp vụ tại quầy.
+1.	The patron brings the book or their library card to the desk to request a due date extension.
+2.	The librarian scans the patron's library card to verify their account status.
+3.	The librarian scans the barcode of the book the patron wishes to renew.
+4.	The system checks business constraints similar to the online process (e.g., the book has no pending reservations, the patron has no other overdue books, and the renewal count has not exceeded four times).
+5.	The librarian clicks the "Confirm In-Person Renewal" button.
+6.	The system executes a transaction to update the due date in the database's `BorrowDetail` table, extending it by 14 days.
+7.	The system displays a successful renewal notification on the librarian's screen.
 
-16.4. Trạng thái hệ thống sau khi thực hiện Use-case: Ngày hẹn trả mới của cuốn sách được cập nhật thành công vào cơ sở dữ liệu.
+16.3. System State Before Use-Case Execution: The librarian is logged in and positioned at the circulation desk interface.
 
-16.5. Điểm mở rộng:
+16.4. System State After Use-Case Execution: The book's new due date has been successfully updated in the database.
 
-o	Use-case Print Receipt: Hệ thống in biên nhận xác nhận thời hạn trả mới để độc giả lưu trữ thông tin hạn trả.
+16.5. Extension Points:
+
+o	Print Receipt Use-Case: The system prints a receipt confirming the new due date for the patron's records.
 
 **17. Use-case Process Return**
 
-17.1. Tóm tắt: Thủ thư tiếp nhận sách vật lý từ độc giả mang trả tại quầy, cập nhật hoàn tất giao dịch mượn và rà soát các lỗi vi phạm phát sinh.
+17.1. Summary: The librarian receives physical books returned by patrons at the counter, completes the return transaction, and checks for any violations.
 
-17.2. Dòng sự kiện:
+17.2. Flow of events:
 
-17.2.1. Dòng sự kiện chính:
+17.2.1. Main flow:
 
-1.	Độc giả mang sách vật lý đến quầy lưu thông để làm thủ tục trả sách.
-2.	Thủ thư khởi động màn hình "Nhận trả sách" trên phần mềm.
-3.	Thủ thư quét mã vạch (CopyID) dán trên cuốn sách vật lý.
-4.	Hệ thống tự động truy vấn tìm kiếm bản ghi chi tiết mượn sách (BorrowDetail) đang ở trạng thái mở tương ứng với mã vạch sách vừa quét để lấy thông tin ReaderID, DateBorrow và DueDate.
-5.	Thủ thư tiến hành kiểm tra thực tế thể chất cuốn sách (soi các trang sách xem có bị rách, viết bẩn, vẽ bậy, mất trang hoặc rách bìa hay không).
-6.	Thủ thư chọn ghi nhận trạng thái sách thực tế khi trả vào phần mềm (ví dụ: "Nguyên vẹn", "Rách bìa", "Mất trang", "Mất sách").
-7.	Hệ thống cập nhật trường ngày trả thực tế (Actual return date) bằng ngày hiện tại vào bảng BorrowDetail.
-8.	Hệ thống cập nhật trạng thái của bản sao cuốn sách trong bảng BookCopy từ "On borrow" quay trở lại trạng thái "Available", đồng thời cập nhật tăng số lượng tồn kho khả dụng trên kệ của đầu sách đó.
-9.	Hệ thống xóa cuốn sách đã trả khỏi danh sách sách đang mượn nợ hiện hành của độc giả.
-    
-17.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Thủ thư đã đăng nhập thành công và đang hoạt động tại giao diện xử lý nhận sách trả.
+1.	The patron brings the physical book to the circulation counter to return it.
+2.	The librarian opens the "Book Return" screen in the software.
+3.	The librarian scans the barcode (CopyID) affixed to the physical book.
+4.	The system automatically searches for the active loan record (BorrowDetail) corresponding to the scanned barcode to retrieve the ReaderID, DateBorrow, and DueDate.
+5.	The librarian physically inspects the book (checking pages for tears, stains, scribbles, missing pages, or a torn cover).
+6.	The librarian records the book's actual condition upon return in the software (e.g., "Intact," "Torn cover," "Missing pages," "Lost book").
+7.	The system updates the "Actual return date" field in the BorrowDetail table with the current date.
+8.	The system updates the status of the book copy in the BookCopy table from "On borrow" back to "Available" and increments the available shelf inventory count for that book title.
+9.	The system removes the returned book from the patron's list of currently borrowed items.
 
-17.4. Trạng thái hệ thống sau khi thực hiện Use-case: Giao dịch trả sách được ghi nhận, trạng thái sách vật lý trong kho được phục hồi về khả dụng cho lượt mượn tiếp theo.
+17.3. System state before starting the use case: The librarian has successfully logged in and is working within the book return processing interface.
 
-17.5. Điểm mở rộng:
+17.4. System state after executing the use case: The return transaction is recorded, and the physical book's status in the inventory is restored to "Available" for future loans.
 
-o	Use-case Issue Fine Ticket: Tự động kích hoạt khi hệ thống đối chiếu ngày trả thực tế trễ hơn so với ngày hẹn trả (DueDate), hoặc khi thủ thư chọn ghi nhận sách trả bị rách hỏng, mất trang hoặc làm mất sách.
+17.5. Extension points:
 
-o	Use-case Print Receipt: Hệ thống tự động in phiếu xác nhận trả sách thành công cho độc giả sau khi hoàn thành.
+o	"Issue Fine Ticket" use case: Automatically triggered when the system detects that the actual return date is later than the scheduled due date, or when the librarian records a returned book as torn, missing pages, or lost.
+
+o	"Print Receipt" use case: The system automatically prints a return confirmation slip for the patron upon completion.
 
 **18. Use-case Issue Fine Ticket**
 
-18.1. Tóm tắt: Khởi tạo phiếu phạt vi phạm quy chế thư viện khi độc giả trả sách trễ hạn, làm hỏng sách hoặc làm mất sách, đồng thời áp đặt hình thức chế tài xử lý.
+18.1. Summary: Generate a library violation fine record when a patron returns a book late, damages it, or loses it, and apply the corresponding penalty.
 
-18.2. Dòng sự kiện:
+18.2. Flow of Events:
 
-18.2.1. Dòng sự kiện chính:
+18.2.1. Main Flow:
 
-1.	Hệ thống tự động tính toán số ngày trả trễ hạn (nếu có): OverdueDays = ActualReturnDate - DueDate.
-2.	Hệ thống áp dụng quy tắc tính tiền phạt tự động theo chính sách thư viện để ra số tiền phạt cụ thể (ví dụ: 5.000 VNĐ cho mỗi ngày trễ hạn).
-3.	Đối với các trường hợp sách bị hư hỏng vật chất (rách bìa, vẽ bậy, mất trang, mất sách) do thủ thư nhập vào, hệ thống áp dụng đơn giá đền bù theo khung quy định.
-4.	Hệ thống tự động khởi tạo một bản ghi phiếu phạt mới vào bảng FineReceipt gồm: Mã phiếu phạt (FineID), Mã giao dịch mượn gốc, Nội dung lỗi vi phạm chi tiết, Tổng số tiền phạt phát sinh, ngày khởi tạo và thiết lập trạng thái hóa đơn phạt là "Pending Payment" (Chờ thanh toán).
-5.	Hệ thống tự động cập nhật trạng thái tài khoản thẻ độc giả trong bảng Reader thành trạng thái "Temporarily Suspended" (Tạm khóa tài khoản) để chặn toàn bộ quyền mượn sách hoặc gia hạn tiếp theo cho đến khi hoàn tất nộp tiền phạt.
-6.	Hệ thống hiển thị thông tin phiếu phạt chi tiết lên màn hình thủ thư và gửi thông báo nhắc nợ phạt qua email/app độc giả.
-   
-18.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Hệ thống phát hiện lỗi vi phạm thời hạn hoặc tình trạng sách trong tiến trình nhận sách trả tại quầy.
+1.	The system automatically calculates the number of overdue days (if applicable): OverdueDays = ActualReturnDate - DueDate.
+2.	The system applies automatic fine calculation rules based on library policy to determine the specific fine amount (e.g., 5,000 VND per overdue day).
+3.	For cases of physical damage (torn cover, graffiti, missing pages, lost book) entered by the librarian, the system applies compensation rates based on the established schedule of charges.
+4.	The system automatically creates a new fine record in the FineReceipt table, including: FineID, original loan transaction ID, detailed violation description, total fine amount, and creation date; it sets the fine status to "Pending Payment."
+5.	The system automatically updates the patron's account status in the Reader table to "Temporarily Suspended," blocking all future borrowing or renewal privileges until the fine is paid.
+6.	The system displays detailed fine information on the librarian's screen and sends a fine payment reminder via email or the patron app.
 
-18.4. Trạng thái hệ thống sau khi thực hiện Use-case: Phiếu phạt vi phạm được ghi nhận thành công vào DB ở trạng thái chờ thanh toán, tài khoản độc giả bị tạm khóa an toàn trên toàn hệ thống.
+18.3. System State Before Use Case Execution: The system detects a deadline violation or an issue with the book's condition during the return process at the counter.
 
-18.5. Điểm mở rộng:
+18.4. System State After Use Case Execution: The violation fine record is successfully saved to the database with a "Pending Payment" status, and the patron's account is securely suspended across the system.
 
-o	Use-case Collect Fine Payment: Thủ thư tiến hành thu tiền phạt trực tiếp từ độc giả tại quầy mượn trả để giải tỏa công nợ phạt.
+18.5. Extension point:
+
+o	"Collect Fine Payment" use case: The librarian collects fine payments directly from the patron at the circulation desk to clear outstanding fine balances.
 
 **19. Use-case Collect Fine Payment**
 
-19.1. Tóm tắt: Tiếp nhận thanh toán tiền phạt của độc giả vi phạm, cập nhật trạng thái hóa đơn đã thanh toán và khôi phục quyền hoạt động cho thẻ độc giả.
+19.1. Summary: Accept fine payments from patrons in violation, update the invoice status to "Paid," and restore the patron's card privileges.
 
-19.2. Dòng sự kiện:
+19.2. Flow of Events:
 
-19.2.1. Dòng sự kiện chính:
+19.2.1. Main Flow:
 
-1.	Độc giả nộp tiền mặt trực tiếp tại quầy hoặc thực hiện chuyển khoản.
-2.	Thủ thư tìm kiếm mã phiếu phạt của độc giả trên phần mềm quản lý công nợ phạt.
-3.	Thủ thư kiểm tra số tiền cần thu và nhấn nút "Xác nhận đã thu tiền phạt".
-4.	Hệ thống thực hiện cập nhật trạng thái phiếu phạt trong bảng FineReceipt từ "Pending Payment" chuyển sang trạng thái "Paid" (Đã thanh toán) và ghi nhận ngày thanh toán thực tế cùng mã thủ thư xử lý.
-5.	Hệ thống tự động kiểm tra xem độc giả còn phiếu phạt nào khác chưa thanh toán không. Nếu độc giả đã hoàn tất sạch nợ phạt, hệ thống tự động giải khóa trạng thái thẻ của độc giả trong bảng Reader từ "Temporarily Suspended" quay trở lại trạng thái hoạt động bình thường "Active".
-6.	Hệ thống hiển thị thông báo cập nhật thanh toán thành công.
-   
-19.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Độc giả đang có phiếu phạt trạng thái chưa nộp tiền và thủ thư đã chọn đúng phiếu phạt cần xử lý.
+1.	The patron pays in cash at the counter or makes a bank transfer.
+2.	The librarian searches for the patron's fine slip code in the fine management software.
+3.	The librarian verifies the amount due and clicks the "Confirm Fine Payment" button.
+4.	The system updates the fine slip status in the `FineReceipt` table from "Pending Payment" to "Paid" and records the actual payment date and the processing librarian's ID.
+5.	The system automatically checks if the patron has any other unpaid fine slips. If the patron has cleared all outstanding fines, the system automatically changes the patron's card status in the `Reader` table from "Temporarily Suspended" back to "Active."
+6.	The system displays a notification confirming the successful payment update.
 
-19.4. Trạng thái hệ thống sau khi thực hiện Use-case: Trạng thái phiếu phạt được cập nhật thành "Paid" trong DB, tài khoản độc giả được giải khóa khôi phục quyền mượn sách bình thường.
+19.3. System State Before Use-Case Execution: The patron has a fine slip with an unpaid status, and the librarian has selected the correct fine slip to process.
 
-19.5 Điểm mở rộng:
+19.4. System State After Use-Case Execution: The fine slip status is updated to "Paid" in the database, and the patron's account is unblocked, restoring normal borrowing privileges.
 
-o	Use-case Print Receipt: Hệ thống in biên lai thu tiền phạt tài chính giao cho độc giả làm chứng từ đối chiếu.
+19.5. Extension Points:
+
+o	Print Receipt Use-Case: The system prints a fine payment receipt to provide to the patron for reconciliation purposes.
 
 **20. Use-case Print Receipt**
 
-20.1. Tóm tắt: In biên nhận vật lý tại quầy để làm chứng từ xác nhận hoàn thành giao dịch (Phiếu mượn sách, Phiếu trả sách, Biên lai thu tiền phạt) giao cho độc giả.
+20.1. Summary: Print a physical receipt at the counter to serve as proof of transaction completion (book loan slip, book return slip, or fine payment receipt) and hand it to the patron.
 
-20.2. Dòng sự kiện:
+20.2. Flow of Events:
 
-20.2.1. Dòng sự kiện chính:
+20.2.1. Main Flow:
 
-1.	Sau khi một giao dịch lưu thông (mượn sách, trả sách hoặc thu tiền phạt) được xác nhận thành công trên hệ thống.
-2.	Hệ thống gửi dữ liệu định dạng hóa đơn chuẩn (chứa thông tin mã giao dịch, họ tên độc giả, danh sách sách/lỗi vi phạm, số tiền, ngày giờ thực hiện, tên thủ thư) tới máy in nhiệt chuyên dụng kết nối tại quầy.
-3.	Máy in xuất bản biên nhận vật lý thành công cho độc giả và ghi nhận sự kiện in chứng từ vào file nhật ký hệ thống.
-   
-20.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Giao dịch lưu thông tương ứng đã được ghi nhận thành công và ghi vào DB.
+1.	A circulation transaction (book loan, book return, or fine collection) is successfully confirmed in the system.
+2.	The system sends formatted receipt data (containing the transaction ID, patron's name, list of books/violations, amount, timestamp, and librarian's name) to the dedicated thermal printer connected at the counter.
+3.	The printer successfully outputs the physical receipt for the patron and logs the printing event in the system log file.
+
+20.3. System State Prior to Use Case Execution: The corresponding circulation transaction has been successfully recorded and stored in the database.
 
 **21. Use-case Manage Book Catalog**
 
-21.1. Tóm tắt: Cho phép thủ thư và quản trị viên quản lý vòng đời dữ liệu sách và tài liệu thư viện, bao gồm các chức năng Thêm mới, Cập nhật thông tin và Xóa sách.
+21.1. Summary: Enables librarians and administrators to manage the lifecycle of library books and materials, including functions to add new items, update information, and delete books.
 
-21.2. Dòng sự kiện:
+21.2. Flow of Events:
 
-21.2.1. Dòng sự kiện chính:
+21.2.1. Main Flow:
 
-1.	Người dùng chọn chức năng "Quản lý danh mục sách" trên giao diện hệ thống.
-2.	Hệ thống hiển thị toàn bộ danh sách các đầu sách hiện có kèm công cụ lọc tìm kiếm nâng cao.
-3.	Người dùng có thể chọn một trong các hành động sau:
-   
-o	Thêm đầu sách mới: Nhập thông tin Metadata của sách (Tên sách, năm xuất bản, thông tin tác giả, nhà xuất bản, thể loại). Hệ thống kiểm tra trùng lặp thông tin, sau đó thêm dữ liệu mới vào bảng Book, tự động tạo mã bản sao (CopyID) và in nhãn dán mã vạch.
+1.	The user selects the "Book Catalog Management" function on the system interface.
+2.	The system displays the complete list of existing book titles along with advanced search and filtering tools.
+3.	The user may select one of the following actions:
 
-o	Cập nhật sách: Chọn đầu sách cần sửa, tiến hành chỉnh sửa thông tin xuất bản hoặc số lượng tồn kho khả dụng trên kệ, sau đó nhấn xác nhận để hệ thống lưu đè thông tin mới vào DB.
+o	Add new book title: Enter the book's metadata (title, publication year, author information, publisher, genre). The system checks for duplicate information, adds the new data to the "Book" table, automatically generates a copy code (CopyID), and prints a barcode label.
 
-o	Xóa sách: Chọn đầu sách/bản sao vật lý cần xóa (do rách nát, lỗi thời cần thanh lý), hệ thống yêu cầu xác nhận thao tác xóa.
+o	Update book: Select the book title to be modified, edit publication details or the quantity of copies available on the shelf, and then click confirm to save the new information to the database, overwriting the old data.
 
-21.2.2. Các dòng sự kiện khác:
+o	Delete book: Select the book title or physical copy to be deleted (e.g., due to damage or obsolescence requiring disposal); the system requests confirmation of the deletion action.
 
-o	Trường hợp xóa sách bị vướng lỗi ràng buộc khóa ngoại: Nếu người dùng chọn xóa một cuốn sách đã từng có lịch sử mượn trả được lưu trữ trong quá khứ, hệ thống phát hiện ràng buộc khóa ngoại (RESTRICT từ bảng mượn chi tiết) sẽ ngăn chặn hành vi xóa vật lý để tránh phá vỡ tính toàn vẹn dữ liệu. Hệ thống sẽ hiển thị thông báo lỗi cảnh báo và tự động hướng dẫn người dùng chuyển trạng thái của cuốn sách đó sang trạng thái "Liquidation" (Xóa mềm - Soft Delete) để ẩn khỏi OPAC nhưng vẫn bảo toàn lịch sử giao dịch.
+21.2.2. Alternative Flows:
 
-21.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Thủ thư hoặc Admin ở trạng thái đăng nhập hệ thống thành công và có quyền hạn quản lý danh mục tài liệu.
+o	Deletion blocked by foreign key constraint: If the user attempts to delete a book that has a recorded borrowing/returning history, the system detects a foreign key constraint (RESTRICT rule from the loan details table) and prevents physical deletion to maintain data integrity. The system displays a warning error message and automatically guides the user to change the book's status to "Liquidation" (Soft Delete), hiding it from the OPAC while preserving transaction history.
 
-21.4. Trạng thái hệ thống sau khi thực hiện Use-case: Cơ sở dữ liệu danh mục sách D2: Books & BookCopies được cập nhật, ghi nhận thông tin sửa đổi thành công.
+21.3. System state prior to Use-case execution: The Librarian or Admin is successfully logged into the system and possesses the authority to manage the document catalog.
+
+21.4. System state after Use-case execution: The book catalog database (D2: Books & BookCopies) is updated, and the modifications are successfully recorded.
 
 **22. Use-case Manage Reader Accounts**
 
-22.1. Tóm tắt: Cho phép thủ thư và quản trị viên quản lý thông tin lý lịch độc giả, phê duyệt sửa đổi hồ sơ và kiểm soát trạng thái kích hoạt/khóa thẻ của độc giả.
+22.1. Summary: Allows librarians and administrators to manage patron profile information, approve profile modifications, and control the activation/lock status of patron cards.
 
-22.2. Dòng sự kiện:
+22.2. Flow of events:
 
-o	22.2.1. Dòng sự kiện chính:
+o	22.2.1. Main flow:
 
-1.	Người dùng truy cập chức năng "Quản lý tài khoản độc giả" trên phần mềm quản trị.
-2.	Hệ thống hiển thị danh sách toàn bộ độc giả trong cơ sở dữ liệu kèm theo các bộ lọc trạng thái tài khoản ("Active", "Pending", "Suspended").
-3.	Người dùng thực hiện các hành động quản lý:
-   
-o	Cập nhật hồ sơ: Sửa đổi thông tin liên lạc (địa chỉ thường trú, số điện thoại, email) theo yêu cầu đổi thông tin của độc giả, gia hạn thời hạn hiệu lực của thẻ thư viện.
+1.	The user accesses the "Patron Account Management" function within the administration software.
+2.	The system displays a list of all patrons in the database, accompanied by account status filters ("Active", "Pending", "Suspended").
+3.	The user performs management actions:
 
-o	Khóa tài khoản thủ công: Chủ động chuyển trạng thái độc giả sang "Locked" (khóa thẻ) đối với các trường hợp độc giả vi phạm nghiêm trọng nội quy thư viện, báo mất thẻ hoặc có yêu cầu ngừng sử dụng dịch vụ.
+o	Update profile: Modify contact information (permanent address, phone number, email) based on patron requests and extend the library card's validity period.
 
-o	Mở khóa tài khoản: Chuyển trạng thái độc giả về "Active" sau khi độc giả giải quyết xong các vi phạm chính sách hoặc hoàn tất đóng phạt.
+o	Manually lock account: Proactively change the patron status to "Locked" (card locked) in cases of serious library rule violations, reported lost cards, or requests to discontinue service.
 
-22.3. Các yêu cầu đặc biệt: Toàn bộ danh sách độc giả hiển thị phải được phân trang đầy đủ để đảm bảo tối ưu hóa tốc độ truy vấn cơ sở dữ liệu.
+o	Unlock account: Change the patron status back to "Active" after the patron has resolved policy violations or paid required fines.
 
-22.4. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Người dùng đã đăng nhập hệ thống thành công và sở hữu phân quyền quản trị tài khoản độc giả.
+22.3. Special requirements: The displayed list of patrons must be fully paginated to ensure optimized database query speed.
 
-22.5. Trạng thái hệ thống sau khi thực hiện Use-case: Cơ sở dữ liệu thông tin độc giả D1: Readers được cập nhật trạng thái mới thành công.
+22.4. System state prior to Use-case execution: The user has successfully logged into the system and possesses the necessary permissions for patron account management.
+
+22.5. System state after Use-case execution: The patron information database (D1: Readers) has been successfully updated with the new status.
 
 **23. Use-case Manage Staff Accounts**
 
-23.1. Tóm tắt: Tính năng đặc quyền cao của Quản trị viên (Admin) dùng để quản lý hồ sơ nhân sự, cấp phát tài khoản tác vụ và phân quyền hoạt động cho các nhân viên thủ thư.
+23.1. Summary: High-privilege Administrator (Admin) functionality used to manage personnel records, issue operational accounts, and assign permissions to library staff.
 
-23.2. Dòng sự kiện:
+23.2. Flow of Events:
 
-23.2.1. Dòng sự kiện chính:
+23.2.1. Main Flow:
 
-1.	Quản trị viên (Admin) đăng nhập hệ thống và chọn chức năng "Quản lý tài khoản nhân viên".
-2.	Hệ thống hiển thị danh sách các nhân viên thủ thư hiện tại kèm chi tiết chức vụ và bộ phận làm việc.
-3.	Admin tiến hành các thao tác:
-   
-o	Cấp tài khoản mới: Nhập thông tin lý lịch nhân sự (Họ tên, ngày sinh, giới tính, CCCD, chức vụ, lương cơ bản) và cấp tên đăng nhập cùng mật khẩu khởi tạo hệ thống.
+1.	The Administrator (Admin) logs into the system and selects the "Staff Account Management" function.
+2.	The system displays a list of current library staff, including details on their positions and departments.
+3.	The Admin performs the following actions:
 
-o	Phân quyền vai trò (Role Assignment): Gán quyền hạn tác vụ cụ thể cho nhân viên (ví dụ: gán quyền Thủ thư lưu thông tại quầy, Thủ thư quản lý kho tài liệu catalog, hoặc Thủ thư thống kê báo cáo tài chính).
+o	Issue new account: Enter personnel details (full name, date of birth, gender, ID card number, position, base salary) and assign a username and initial system password.
 
-o	Vô hiệu hóa tài khoản: Chuyển trạng thái tài khoản thủ thư sang "Inactive" hoặc xóa tài khoản khi nhân sự nghỉ việc để thu hồi toàn bộ quyền truy cập vào hệ thống thư viện.
+o	Role Assignment: Assign specific operational permissions to staff (e.g., Circulation Librarian, Cataloging/Collection Management Librarian, or Financial Reporting Librarian).
 
-23.3. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Quản trị viên đang đăng nhập hệ thống với quyền hạn tối cao (Admin).
+o	Deactivate account: Change the staff account status to "Inactive" or delete the account upon staff resignation to revoke all access to the library system.
 
-23.4. Trạng thái hệ thống sau khi thực hiện Use-case: Cơ sở dữ liệu nhân sự thủ thư D5: Staffs được cập nhật chính xác, mọi thay đổi phân quyền lập tức có hiệu lực ở phiên đăng nhập tiếp theo.
+23.3. System state prior to Use-case execution: The Administrator is logged into the system with full administrative privileges (Admin).
+
+23.4. System state after Use-case execution: The library staff database (D5: Staffs) is accurately updated, and all permission changes take effect immediately upon the next login session.
 
 **24. Use-case Statistics & Reports**
 
-24.1. Tóm tắt: Hỗ trợ kết xuất các số liệu thống kê chi tiết, trực quan hóa biểu đồ hoạt động lưu thông sách và báo cáo tài chính phạt phục vụ ban quản trị thư viện.
+24.1. Summary: Supports the generation of detailed statistics, visualizations of book circulation activity, and financial reports on fines for library management.
 
-24.2. Dòng sự kiện:
+24.2. Flow of Events:
 
-24.2.1. Dòng sự kiện chính:
+24.2.1. Main Flow:
 
-1.	Người dùng (Staff hoặc Admin) chọn chức năng "Thống kê & Báo cáo" trên màn hình quản lý.
-2.	Người dùng lựa chọn loại báo cáo mong muốn:
-o	Báo cáo lưu thông mượn trả hàng ngày/hàng tuần (Thủ thư thường dùng).
-o	Danh sách sách bị mượn quá hạn chưa trả.
-o	Báo cáo tài chính doanh thu thu phạt vi phạm (Admin dùng).
-o	Thống kê tần suất mượn sách theo từng thể loại để hỗ trợ mua sắm tư liệu mới.
-3.	Người dùng thiết lập cấu hình khoảng thời gian lọc số liệu cần kết xuất báo cáo.
-4.	Hệ thống tiến hành truy vấn dữ liệu từ tất cả các kho dữ liệu (D1, D2, D3, D4), tiến hành tính toán các chỉ số thống kê (KPI) và hiển thị bảng biểu số liệu trực quan lên màn hình.
-5.	Người dùng có thể chọn chức năng "Xuất báo cáo" dưới định dạng file chuẩn PDF hoặc bảng tính Excel để in ấn, chia sẻ hoặc lưu trữ lưu hồ sơ.
-   
-24.3. Các yêu cầu đặc biệt: Tiến trình thống kê dữ liệu chỉ hoạt động dưới cơ chế Đọc dữ liệu (Read-only), tuyệt đối không thực hiện bất kỳ thao tác ghi đè hay thay đổi trạng thái dữ liệu tĩnh của các bảng trong DB để đảm bảo tính an toàn dữ liệu tuyệt đối.
+1.	The user (Staff or Admin) selects the "Statistics & Reports" function on the management screen.
+2.	The user selects the desired report type:
+o	Daily/weekly circulation report (borrowing and returning) (used by librarians).
+o	List of overdue, unreturned books.
+o	Financial report on fine revenue (used by Admins).
+o	Statistics on borrowing frequency by genre to support new material acquisition.
+3.	The user configures the time range for filtering the data to be reported.
+4.	The system queries data from all data repositories (D1, D2, D3, D4), calculates statistical indicators (KPIs), and displays visual data tables on the screen.
+5.	The user can select the "Export Report" function to generate standard PDF files or Excel spreadsheets for printing, sharing, or archiving.
 
-24.4. Trạng thái hệ thống trước khi bắt đầu thực hiện Use-case: Người dùng đã đăng nhập thành công và sở hữu phân quyền xem báo cáo thống kê tương ứng.
+24.3. Special Requirements: The data statistics process operates strictly in "Read-only" mode; it must not perform any operations that overwrite or alter the static data state of database tables, ensuring absolute data integrity.
 
+24.4. System State Prior to Use-Case Execution: The user has successfully logged in and possesses the appropriate permissions to view statistical reports.
 
 
 
