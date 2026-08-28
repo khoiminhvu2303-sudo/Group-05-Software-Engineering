@@ -6,62 +6,60 @@
 
 
    **1.1	List of Actor**
-   
-  	1.1.1. Guest: Guests or users who have not logged into the system.
-   
-  	1.1.2. Reader: Registered readers who have been issued a library card have an account to access online functions (OPAC, renewals, and holds).
-   
-  	1.1.3  Staff: The librarian on duty at the circulation desk is authorized to handle circulation transactions (lending and returns) and manage the   collection.
-   
-  	1.1.4  Admin: Senior system administrator responsible for managing library staff, configuring library policies, and approving reports
+
+   | Actor | Meaning |
+   |-----|-----|
+   | Guest | Guests or users who have not logged into the system |
+   | Reader | Registered readers who have been issued a library card have an account to access online functions (OPAC, renewals, and holds) |
+   | Staff | The librarian on duty at the circulation desk is authorized to handle circulation transactions (lending and returns) and manage the   collection |
+   | Admin | Senior system administrator responsible for managing library staff, configuring library policies, and approving reports |
+  	
    **1.2	List of Use-case**
    
-  	1.2.1 Register Account: Sign up for a new reader account.
-    
-  	1.2.2 Log in: Log in to the system
-    
-  	1.2.3 Recover Password: Reset forgotten password.
-    
-  	1.2.4 View Personal Information: View personal profile details.
-    
-  	1.2.5 Search Books: Search for library books.
-    
-  	1.2.6 Reserve Book: Hold a book on the shelf.
-    
-  	1.2.7 View Borrowing History: View past and current book borrows.
-    
-  	1.2.8 Add to Online Wishlist: Save favorite books to list.
-    
-  	1.2.9 Remove from Online Wishlist: Delete books from wishlist
-    
-  	1.2.10 Renew Books Online: Extend book borrow via web/app.
-    
-  	1.2.11 Manage Book Catalog: Add, edit, or delete books.
-    
-  	1.2.12 Process Borrowing: Issue physical books to readers. 
-    
-  	1.2.13 Over-the-Counter Renewal: Extend book borrow at the counter.
-    
-  	1.2.14 Verify Reader Card: Validate reader card status.
-    
-  	1.2.15 Process Return: Receive returned books
-    
-  	1.2.16 Issue Fine Ticket: Create overdue or damage fine.
-    
-  	1.2.17 Print Receipt: Print transaction receipts.
-    
-  	1.2.18 Collect Fine Payment: Receive fine payment from reader
-    
-  	1.2.19 Manage Staff Accounts: Add, edit, or delete staff profiles
-    
-  	1.2.20 Manage Reader Accounts: Edit and activate reader accounts.
-    
-  	1.2.21 Statistics & Reports: View and export library reports
-    
-  	1.2.22 View Registration Requests: View pending sign-up requests
-    
-  	1.2.23 Approve Reader Card Issue: Activate card and issue QR code.
-  	
+  | No | Use-case | Meaning | Note(Group) |
+  |----|----------|---------|-------------|
+  | 1  | Register Account | Sign up for a new reader account | 2 |
+  | 2  | Log in |  Log in to the system | 2 |
+  | 3  |Recover Password | Reset forgotten password | N/A |
+  | 4  |View Personal Information | View personal profile details | N/A |
+  |	5  |Search Books | Search for library books | 3 |
+  | 6  |Reserve Book | Hold a book on the shelf | 3 |
+  | 7  |View Borrowing History | View past and current book borrows | 4 |
+  | 8  |Add to Online Wishlist | Save favorite books to list | 3 |
+  | 9  |Remove from Online Wishlist |  Delete books from wishlist | 3 |
+  | 10 |Renew Books Online | Extend book borrow via web/app | 5 |
+  | 11 |Manage Book Catalog | Add, edit, or delete books | 1 |
+  | 12 |Process Borrowing | Issue physical books to readers | 4 |
+  | 13 |Over-the-Counter Renewal | Extend book borrow at the counter | 5 |
+  | 14 |Verify Reader Card | Validate reader card status | 4 |
+  | 15 |Process Return | Receive returned books | 6 | 
+  | 16 |Issue Fine Ticket | Create overdue or damage fine | 6 |
+  | 17 |Print Receipt | Print transaction receipts | 4,6 |
+  | 18 |Collect Fine Payment | Receive fine payment from reader | 6 |
+  | 19 |Manage Staff Accounts | Add, edit, or delete staff profiles | 8 |
+  | 20 |Manage Reader Accounts |  Edit and activate reader accounts | 2 |
+  | 21 |Statistics & Reports | View and export library reports | 7 |
+  | 22 |View Registration Requests |  View pending sign-up requests | 2 |
+  | 23 |Approve Reader Card Issue | Activate card and issue QR code | 2 |
+  
+Group 1: Material Management Process
+
+Group 2: Account & Card Registration Process
+
+Group 3: Search & Reservation Process
+
+Group 4: Borrowing Process
+
+Group 5: Renewal Process
+
+Group 6: Return & Fines Process
+
+Group 7: Reporting & Analytics Process
+
+Group 8: System Admin Management Process
+
+N/A: System utility functions not included in the main circulation process (e.g., Change password, View personal information)
+
   **2. Use-case Register Account**
   
 2.1. Summary: Allows visitors to register for online reader accounts to send requests for new membership cards to the system.
