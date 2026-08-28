@@ -5,7 +5,7 @@
 <img width="609" height="969" alt="image" src="https://github.com/user-attachments/assets/f3010d92-cf1e-4018-9587-90105db308a8" />
 
 
-   **1.1	List of Actor**
+   *1.1	List of Actor*
 
    | Actor | Meaning |
    |-----|-----|
@@ -14,7 +14,7 @@
    | Staff | The librarian on duty at the circulation desk is authorized to handle circulation transactions (lending and returns) and manage the   collection |
    | Admin | Senior system administrator responsible for managing library staff, configuring library policies, and approving reports |
   	
-   **1.2	List of Use-case**
+   *1.2	List of Use-case*
    
   | No | Use-case | Meaning | Note(Group) |
   |----|----------|---------|-------------|
@@ -62,11 +62,11 @@ N/A: System utility functions not included in the main circulation process (e.g.
 
   **2. Use-case Register Account**
   
-2.1. Summary: Allows visitors to register for online reader accounts to send requests for new membership cards to the system.
+*2.1. Summary: Allows visitors to register for online reader accounts to send requests for new membership cards to the system.*
 
-2.2. Event stream:
+*2.2. Event stream*
 
-2.2.1. Main line of events:
+*2.2.1. Main line of events*
 
 1. User selects "Register account" function on OPAC interface.
 2. The system requires users to provide personal information: Full name, date of birth, gender, phone number, email address, CCCD number, permanent address and initialization password.
@@ -74,33 +74,34 @@ N/A: System utility functions not included in the main circulation process (e.g.
 4. The system checks the validity and compares duplicate data (avoid duplicate Emails, Phone Numbers or CCCDs in the D1: Readers database).
 5. The system saves the reader profile in a pending approval state ("Pending Approval") and sends a notification of successful registration to the user.
 
-2.2.2. Other event streams:
+*2.2.2. Other event streams*
 
 o In case the login name (email) already exists: The system displays the error message "This email is already in use". Users can choose to re-enter another email or cancel registration.
 
 o In case of missing required information: If the user is missing Full Name, Email, Phone Number, CCCD or password of less than 6 characters, the system will report a specific error in each data field for the user to modify.
 
-2.3. Special requirements:
+*2.3. Special requirements*
 
 o Passwords when stored in the database must be one-way encrypted using a secure hash function (Hash Function SHA-256 or higher, minimum 160 bits).
 
 o The online registration function must integrate Captcha code to prevent data flooding by automated programs.
 
-2.4. System status after performing Use-case: The registration request is successfully recorded in the Reader table in the "Pending Approval" state. System data status is updated securely.
+*2.4. System status after performing Use-case: The registration request is successfully recorded in the Reader table in the "Pending Approval" state. System data status is updated securely.*
+
 **3. Use-case Log In**
 
-3.1. Summary: Authenticate user credentials (Reader, Librarian, Administrator) to grant access to corresponding system functions.
+*3.1. Summary: Authenticate user credentials (Reader, Librarian, Administrator) to grant access to corresponding system functions.*
 
-3.2. Flow of events:
+*3.2. Flow of events*
 
-3.2.1. Main flow:
+*3.2.1. Main flow*
 
 1.	The user accesses the login page and provides their username (Email) and password.
 2.	The user clicks the "Log In" button.
 3.	The system encrypts the entered password and compares it with the encrypted data stored in the database (D1: Readers, D5: Staff, or Admin).
 4.	If the information matches, the system grants access and redirects the user to the interface corresponding to their assigned role.
 
-3.2.2. Alternative flows:
+*3.2.2. Alternative flows*
 
 o	Incorrect username or password: The system displays an error message stating "Incorrect username or password" (without specifying which field is incorrect to enhance security). The user may re-enter the credentials or cancel the operation.
 
@@ -114,11 +115,11 @@ o	Recover Password Use-case: The user can choose to switch to the "Forgot Passwo
 
 **4. Use-case Recover Password**
 
-4.1. Summary: Allows users to regain account access after forgetting their password by using their registered personal email address.
+*4.1. Summary: Allows users to regain account access after forgetting their password by using their registered personal email address*
 
-4.2. Flow of events:
+*4.2. Flow of events*
 
-4.2.1. Main flow:
+*4.2.1. Main flow*
 
 1.	The user selects the "Forgot Password" function from the login screen.
 2.	The system prompts the user to provide the email address associated with their registered account.
@@ -126,35 +127,35 @@ o	Recover Password Use-case: The user can choose to switch to the "Forgot Passwo
 4.	If the email exists, the system automatically generates a new random password, updates the user's record in the database, and simultaneously sends an email containing the new password to the user's inbox.
 5.	The system displays a notification asking the user to check their personal email for the new password.
 
-4.2.2. Alternative flows:
+*4.2.2. Alternative flows*
 
 o	If the email does not exist in the system: The system displays an error message: "Email address does not exist in the system." The user may re-enter the email or exit the function.
 
-4.3. Special requirements: The new password must be generated completely at random using the system's secure encryption algorithm and immediately hashed before being stored in the database.
+*4.3. Special requirements: The new password must be generated completely at random using the system's secure encryption algorithm and immediately hashed before being stored in the database.*
 
-4.4. System state after Use-case execution: The account's old password is invalidated, and the new random password is updated in the database.
+*4.4. System state after Use-case execution: The account's old password is invalidated, and the new random password is updated in the database.*
 
 **5. Use-case View Personal Information**
 
-5.1. Summary: Users (Readers, Librarians, Administrators) access the system to view their personal details and activity history.
+*5.1. Summary: Users (Readers, Librarians, Administrators) access the system to view their personal details and activity history.*
 
-5.2. Flow of Events:
+*5.2. Flow of Events*
 
-5.2.1. Main Flow:
+*5.2.1. Main Flow*
 
 1.	The user selects the "Profile" or "View Account Information" function.
 2.	The system checks the current user's role and queries profile details from the corresponding table (Reader, Staff, or Admin).
 3.	The system displays detailed information: full name, date of birth, phone number, email, address, account creation date, and borrowing/returning history (for readers) or shift activity history (for librarians).
 
-5.3. System state prior to Use-case execution: The user must be successfully logged into the system.
+*5.3. System state prior to Use-case execution: The user must be successfully logged into the system.*
 
 **6. Use-case View Registration Requests**
 
-6.1. Summary: Allows a librarian or administrator to view a list of online reader registration applications currently awaiting approval.
+*6.1. Summary: Allows a librarian or administrator to view a list of online reader registration applications currently awaiting approval.*
 
-6.2. Flow of Events:
+*6.2. Flow of Events*
 
-6.2.1. Main Flow:
+*6.2.1. Main Flow*
 
 1.	The librarian selects the "Approve Card Registration Request" function on the dashboard.
 2.	The system queries the database and displays a list of reader account registration applications with the status "Pending Approval," sorted chronologically with the most recent applications appearing first.
@@ -170,11 +171,11 @@ o	Use Case: Approve Reader Card Issuance – The librarian selects and approves 
 
 **7. Use-case Approve Reader Card Issue**
 
-7.1. Summary: Approve a valid account registration request, activate the library card, and generate an identification QR code to send to the reader.
+*7.1. Summary: Approve a valid account registration request, activate the library card, and generate an identification QR code to send to the reader*
 
-7.2. Flow of Events:
+*7.2. Flow of Events*
 
-7.2.1. Main Flow:
+*7.2.1. Main Flow*
 
 1.	The librarian selects the reader profile requiring approval from the list of pending requests.
 2.	The librarian clicks the "Approve Card Issuance" button.
@@ -183,17 +184,17 @@ o	Use Case: Approve Reader Card Issuance – The librarian selects and approves 
 5.	The system sends an approval confirmation email containing the membership card QR code image to the reader's email address.
 6.	The system displays a notification indicating successful approval.
 
-7.3. System state prior to Use-case execution: The librarian is viewing the details of the reader's registration profile.
+*7.3. System state prior to Use-case execution: The librarian is viewing the details of the reader's registration profile.*
 
-7.4. System state after Use-case execution: The reader account status changes to "Active" in the database, and the library card is successfully activated.
+*7.4. System state after Use-case execution: The reader account status changes to "Active" in the database, and the library card is successfully activated.*
 
 **8. Use-case Search Books**
 
-8.1. Summary: Allows all user types (Visitors, Readers, Librarians) to search for library materials based on various criteria.
+*8.1. Summary: Allows all user types (Visitors, Readers, Librarians) to search for library materials based on various criteria.*
 
-8.2. Flow of Events:
+*8.2. Flow of Events*
 
-8.2.1. Main Flow:
+*8.2.1. Main Flow*
 
 1.	The user selects the material search function from the search toolbar.
 2.	The user enters search keywords (Title, Author, Genre, or book code) and may optionally apply advanced filters (Publication Year, Publisher, Language).
@@ -201,9 +202,9 @@ o	Use Case: Approve Reader Card Issuance – The librarian selects and approves 
 4.	The system displays a list of results, including: cover image, title, author, genre, and the number of copies currently available on the library shelves.
 5.	The user can choose to sort the results list (alphabetically, by entry date, or by loan count) or select an item to view details, such as the content summary and shelf location.
 
-8.3. Special Requirements: Search results must be displayed instantly (response time under 2 seconds for a database of up to 100,000 titles), and the system must support searches without diacritics and approximate (fuzzy) matching.
+*8.3. Special Requirements: Search results must be displayed instantly (response time under 2 seconds for a database of up to 100,000 titles), and the system must support searches without diacritics and approximate (fuzzy) matching.*
 
-8.4. Extension Points:
+*8.4. Extension Points*
 
 o	Reserve Book Use Case: Readers with an official account can place a reservation for a book from the book details interface.
 
@@ -211,11 +212,11 @@ o	Add to Online Wishlist Use Case: Readers can choose to save a book to their pe
 
 **9. Use-case Reserve Book**
 
-9.1. Summary: Allows logged-in patrons to place a hold on a book copy currently available on the shelf before visiting the library to borrow it in person, preventing it from being borrowed by someone else.
+*9.1. Summary: Allows logged-in patrons to place a hold on a book copy currently available on the shelf before visiting the library to borrow it in person, preventing it from being borrowed by someone else.*
 
-9.2. Flow of events:
+*9.2. Flow of events*
 
-9.2.1. Main flow:
+*9.2.1. Main flow*
 
 1.	The patron selects the "Place Hold" function on the details page of the book they wish to borrow.
 2.	The system checks the patron's account eligibility: The account must be "Active," the library card must not be expired, there must be no outstanding overdue fines, and the total number of currently borrowed books plus books on hold must not exceed the maximum allowed limit.
@@ -223,39 +224,39 @@ o	Add to Online Wishlist Use Case: Readers can choose to save a book to their pe
 4.	If all conditions are met, the system changes the book copy's status from "Available" to "Reserved" and sets a hold expiration time (e.g., a maximum of 24 hours from the time the hold was placed).
 5.	The system saves the hold information and generates a confirmation QR code, sending it to the patron's mobile app or email.
 
-9.2.2. Alternative flows:
+*9.2.2. Alternative flows*
 
 o	If the patron's account is locked or the card is expired: The system rejects the transaction and displays a notification stating the specific reason.
 
 o	If the patron has overdue borrowed books or unpaid fines: The system displays a notification rejecting the hold request and asks the patron to settle the fines at the counter before initiating a new transaction.
 
-9.3. System state before the use case begins: The patron is logged in and viewing the details of the book they wish to place on hold.
+*9.3. System state before the use case begins: The patron is logged in and viewing the details of the book they wish to place on hold.*
 
-9.4. System state after the use case is completed: The book copy status is updated to "Reserved" in the database, and the successful hold is recorded in the history.
+*9.4. System state after the use case is completed: The book copy status is updated to "Reserved" in the database, and the successful hold is recorded in the history.*
 
 **10. Use-case Add to Online Wishlist**
 
-10.1. Summary: Allows readers to save favorite titles or those needed for future reference to a personal online list.
+*10.1. Summary: Allows readers to save favorite titles or those needed for future reference to a personal online list.*
 
-10.2. Flow of events:
+*10.2. Flow of events*
 
-10.2.1. Main flow:
+*10.2.1. Main flow*
 
 1.	The reader clicks the "Add to Wishlist" button on the book details page.
 2.	The system records the association between the ReaderID and the corresponding BookID.
 3.	The system updates the reader's personal online Wishlist and displays the notification "Saved to Wishlist".
 
-10.3. System state prior to Use-case execution: The reader has successfully logged into the system.
+*10.3. System state prior to Use-case execution: The reader has successfully logged into the system.*
 
-10.4. System state after Use-case execution: The book title has been successfully added to the reader's personal online Wishlist.
+*10.4. System state after Use-case execution: The book title has been successfully added to the reader's personal online Wishlist.*
 
 **11. Use-case Remove from Online Wishlist**
 
-11.1. Summary: Allows readers to remove book titles they are no longer interested in from their personal online wishlist.
+*11.1. Summary: Allows readers to remove book titles they are no longer interested in from their personal online wishlist.*
 
-11.2. Flow of Events:
+*11.2. Flow of Events*
 
-11.2.1. Main Flow:
+*11.2.1. Main Flow*
 
 1.	The reader accesses the "My Wishlist" page.
 2.	The system displays the full list of saved book titles.
@@ -263,17 +264,17 @@ o	If the patron has overdue borrowed books or unpaid fines: The system displays 
 4.	The system deletes the corresponding record link in the database.
 5.	The system reloads the list page and displays a success notification.
 
-11.3. System State Before Use Case Execution: The reader has successfully logged in and is viewing their personal wishlist.
+*11.3. System State Before Use Case Execution: The reader has successfully logged in and is viewing their personal wishlist.*
 
-11.4. System State After Use Case Execution: The book title has been successfully removed from the personal wishlist, and the database state has been updated.
+*11.4. System State After Use Case Execution: The book title has been successfully removed from the personal wishlist, and the database state has been updated.*
 
 **12. Use-case Process Borrowing**
 
-12.1. Summary: The core circulation desk function allows the librarian to receive requests, verify constraints, and create physical book loan records for patrons.
+*12.1. Summary: The core circulation desk function allows the librarian to receive requests, verify constraints, and create physical book loan records for patrons.*
 
-12.2. Flow of Events:
+*12.2. Flow of Events*
 
-12.2.1. Main Flow:
+*12.2.1. Main Flow*
 
 1.	The patron presents their library card and the books to be borrowed at the service desk.
 2.	The librarian initiates the "Create Loan Record" function in the software.
@@ -285,23 +286,23 @@ o	If the patron has overdue borrowed books or unpaid fines: The system displays 
 8.	The system initiates a new loan transaction in the database: it creates a `BorrowRecord` (containing the transaction ID, patron ID, loan date, and processing librarian ID) and creates `BorrowDetail` records corresponding to each borrowed book (setting the `DueDate` to 14 days from the loan date, per general policy).
 9.	The system updates the status of the book copies in the `BookCopy` table from "Available" to "On borrow" and simultaneously decrements the available stock count.
 
-12.3. Special Requirements: The entire process of scanning codes and processing loan transactions must ensure data integrity (utilizing a transaction mechanism so that if a single loan detail fails, the entire transaction is rolled back to prevent data inconsistency). The barcode scanning response time must be less than 1.5 seconds.
+*12.3. Special Requirements: The entire process of scanning codes and processing loan transactions must ensure data integrity (utilizing a transaction mechanism so that if a single loan detail fails, the entire transaction is rolled back to prevent data inconsistency). The barcode scanning response time must be less than 1.5 seconds.*
 
-12.4. System state prior to Use-case execution: The librarian has successfully logged into the system and is working on the loan slip creation screen.
+*12.4. System state prior to Use-case execution: The librarian has successfully logged into the system and is working on the loan slip creation screen.*
 
-12.5. System state after Use-case execution: The loan slip has been successfully created; book status data and the patron's borrowing limits have been instantly updated in the database.
+*12.5. System state after Use-case execution: The loan slip has been successfully created; book status data and the patron's borrowing limits have been instantly updated in the database.*
 
-12.6. Extension point:
+*12.6. Extension point*
 
 o	Print Receipt Use-case: The system automatically proceeds to the physical loan slip printing flow for the patron to sign and confirm after the borrowing transaction is completed.
 
 **13. Use-case Verify Reader Card**
 
-13.1. Summary: The system automatically reviews and checks the validity and potential constraint violations of the reader's library card before allowing subsequent circulation transactions to proceed.
+*13.1. Summary: The system automatically reviews and checks the validity and potential constraint violations of the reader's library card before allowing subsequent circulation transactions to proceed.*
 
-13.2. Flow of events:
+*13.2. Flow of events*
 
-13.2.1. Main flow:
+*13.2.1. Main flow*
 
 1.	The system receives the ReaderID from the book borrowing or renewal process.
 2.	The system checks the reader card's expiration date (CardExpiryDate) against the current date.
@@ -310,39 +311,39 @@ o	Print Receipt Use-case: The system automatically proceeds to the physical loan
 5.	The system checks if the reader has any overdue books (past the due date) or any outstanding penalty invoices marked as "Pending Payment."
 6.	If all checks pass, the system returns a successful validation result and displays a summary of the reader's information on the librarian's interface.
 
-13.2.2. Alternative flows:
+*13.2.2. Alternative flows*
 
 o	If the card is expired or temporarily blocked: The system emits a warning sound and displays an error message detailing the reason for rejection on the librarian's screen. The use case terminates.
 
 o	If the reader holds overdue books or has unpaid penalties: The system reports a circulation policy violation and blocks the reader from borrowing new books until the violation is resolved.
 
-13.3. System state prior to use case execution: The system has received the reader's library card ID as input from a circulation process.
+*13.3. System state prior to use case execution: The system has received the reader's library card ID as input from a circulation process.*
 
 **14. Use-case View Borrowing History**
 
-14.1. Summary: Allows the reader to view their complete borrowing and return history via their online OPAC account.
+*14.1. Summary: Allows the reader to view their complete borrowing and return history via their online OPAC account.*
 
-14.2. Flow of Events:
+*14.2. Flow of Events*
 
-14.2.1. Main Flow:
+*14.2.1. Main Flow*
 
 1.	The reader selects the "Borrowing History" function on their personal account management page.
 2.	The system queries the `BorrowRecord` and `BorrowDetail` tables, filtering by the `ReaderID` of the currently logged-in reader.
 3.	The system displays a list of all borrowing transactions, sorted chronologically from newest to oldest. Information displayed for each book includes: Title, Borrow Date, Due Date, Actual Return Date (if applicable), status (On Loan, Returned, Overdue), and any incurred fines.
 
-14.3. System State Prior to Use-Case Execution: The reader has successfully logged into the system.
+*14.3. System State Prior to Use-Case Execution: The reader has successfully logged into the system.*
 
-14.4. Extension Points:
+*14.4. Extension Points*
 
 o	"Renew Books Online" Use-Case: The reader can click the "Renew" button next to any book currently "On Loan" that is eligible for renewal.
 
 **15. Use-case Renew Books Online**
 
-15.1. Summary: Readers can renew their book loans online via the mobile app or web interface without needing to bring the books to the library in person.
+*15.1. Summary: Readers can renew their book loans online via the mobile app or web interface without needing to bring the books to the library in person.*
 
-15.2. Flow of events:
+*15.2. Flow of events*
 
-15.2.1. Main flow:
+*15.2.1. Main flow*
 
 1.	The reader accesses the screen displaying the list of currently borrowed books.
 2.	The reader clicks the "Renew Online" button next to the specific book they wish to renew.
@@ -353,20 +354,20 @@ o	The number of renewals for this book has not exceeded the library's maximum li
 4.	If all conditions are met, the system updates the new due date for the corresponding loan record (the new due date is set to 14 days after the original due date) and increments the renewal count by one.
 5.	The system displays a "Renewal Successful" notification, clearly showing the new due date to the reader.
 
-15.2.2. Alternative flows:
+*15.2.2. Alternative flows*
 
 o	If the book is reserved by someone else or renewal constraints are violated: The system displays a renewal rejection notification with the specific reason (e.g., "Book is already reserved" or "You have exceeded the allowed number of renewals"). The book's original due date remains unchanged.
 
-15.3. System state prior to Use-case execution: The reader has successfully logged in and is currently on the interface for managing their borrowed book history. 
-15.4. System state after Use-case execution: The due date for the borrowed book is updated to 14 days later in the database, and the transaction history records the new status.
+*15.3. System state prior to Use-case execution: The reader has successfully logged in and is currently on the interface for managing their borrowed book history.*
+*15.4. System state after Use-case execution: The due date for the borrowed book is updated to 14 days later in the database, and the transaction history records the new status.*
 
 **16. Use-case Over-the-Counter Renewal**
 
-16.1. Summary: The librarian receives the request and processes the book loan extension directly for the patron at the circulation desk.
+*16.1. Summary: The librarian receives the request and processes the book loan extension directly for the patron at the circulation desk.*
 
-16.2. Flow of Events:
+*16.2. Flow of Events*
 
-16.2.1. Main Flow:
+*16.2.1. Main Flow*
 
 1.	The patron brings the book or their library card to the desk to request a due date extension.
 2.	The librarian scans the patron's library card to verify their account status.
@@ -376,21 +377,21 @@ o	If the book is reserved by someone else or renewal constraints are violated: T
 6.	The system executes a transaction to update the due date in the database's `BorrowDetail` table, extending it by 14 days.
 7.	The system displays a successful renewal notification on the librarian's screen.
 
-16.3. System State Before Use-Case Execution: The librarian is logged in and positioned at the circulation desk interface.
+*16.3. System State Before Use-Case Execution: The librarian is logged in and positioned at the circulation desk interface.*
 
-16.4. System State After Use-Case Execution: The book's new due date has been successfully updated in the database.
+*16.4. System State After Use-Case Execution: The book's new due date has been successfully updated in the database.*
 
-16.5. Extension Points:
+*16.5. Extension Points*
 
 o	Print Receipt Use-Case: The system prints a receipt confirming the new due date for the patron's records.
 
 **17. Use-case Process Return**
 
-17.1. Summary: The librarian receives physical books returned by patrons at the counter, completes the return transaction, and checks for any violations.
+*17.1. Summary: The librarian receives physical books returned by patrons at the counter, completes the return transaction, and checks for any violations.*
 
-17.2. Flow of events:
+*17.2. Flow of events*
 
-17.2.1. Main flow:
+*17.2.1. Main flow*
 
 1.	The patron brings the physical book to the circulation counter to return it.
 2.	The librarian opens the "Book Return" screen in the software.
@@ -402,11 +403,11 @@ o	Print Receipt Use-Case: The system prints a receipt confirming the new due dat
 8.	The system updates the status of the book copy in the BookCopy table from "On borrow" back to "Available" and increments the available shelf inventory count for that book title.
 9.	The system removes the returned book from the patron's list of currently borrowed items.
 
-17.3. System state before starting the use case: The librarian has successfully logged in and is working within the book return processing interface.
+*17.3. System state before starting the use case: The librarian has successfully logged in and is working within the book return processing interface.*
 
-17.4. System state after executing the use case: The return transaction is recorded, and the physical book's status in the inventory is restored to "Available" for future loans.
+*17.4. System state after executing the use case: The return transaction is recorded, and the physical book's status in the inventory is restored to "Available" for future loans.*
 
-17.5. Extension points:
+*17.5. Extension points*
 
 o	"Issue Fine Ticket" use case: Automatically triggered when the system detects that the actual return date is later than the scheduled due date, or when the librarian records a returned book as torn, missing pages, or lost.
 
@@ -414,11 +415,11 @@ o	"Print Receipt" use case: The system automatically prints a return confirmatio
 
 **18. Use-case Issue Fine Ticket**
 
-18.1. Summary: Generate a library violation fine record when a patron returns a book late, damages it, or loses it, and apply the corresponding penalty.
+*18.1. Summary: Generate a library violation fine record when a patron returns a book late, damages it, or loses it, and apply the corresponding penalty.*
 
-18.2. Flow of Events:
+*18.2. Flow of Events*
 
-18.2.1. Main Flow:
+*18.2.1. Main Flow*
 
 1.	The system automatically calculates the number of overdue days (if applicable): OverdueDays = ActualReturnDate - DueDate.
 2.	The system applies automatic fine calculation rules based on library policy to determine the specific fine amount (e.g., 5,000 VND per overdue day).
@@ -427,21 +428,21 @@ o	"Print Receipt" use case: The system automatically prints a return confirmatio
 5.	The system automatically updates the patron's account status in the Reader table to "Temporarily Suspended," blocking all future borrowing or renewal privileges until the fine is paid.
 6.	The system displays detailed fine information on the librarian's screen and sends a fine payment reminder via email or the patron app.
 
-18.3. System State Before Use Case Execution: The system detects a deadline violation or an issue with the book's condition during the return process at the counter.
+*18.3. System State Before Use Case Execution: The system detects a deadline violation or an issue with the book's condition during the return process at the counter.*
 
-18.4. System State After Use Case Execution: The violation fine record is successfully saved to the database with a "Pending Payment" status, and the patron's account is securely suspended across the system.
+*18.4. System State After Use Case Execution: The violation fine record is successfully saved to the database with a "Pending Payment" status, and the patron's account is securely suspended across the system.*
 
-18.5. Extension point:
+*18.5. Extension point*
 
 o	"Collect Fine Payment" use case: The librarian collects fine payments directly from the patron at the circulation desk to clear outstanding fine balances.
 
 **19. Use-case Collect Fine Payment**
 
-19.1. Summary: Accept fine payments from patrons in violation, update the invoice status to "Paid," and restore the patron's card privileges.
+*19.1. Summary: Accept fine payments from patrons in violation, update the invoice status to "Paid," and restore the patron's card privileges.*
 
-19.2. Flow of Events:
+*19.2. Flow of Events*
 
-19.2.1. Main Flow:
+*19.2.1. Main Flow*
 
 1.	The patron pays in cash at the counter or makes a bank transfer.
 2.	The librarian searches for the patron's fine slip code in the fine management software.
@@ -450,35 +451,35 @@ o	"Collect Fine Payment" use case: The librarian collects fine payments directly
 5.	The system automatically checks if the patron has any other unpaid fine slips. If the patron has cleared all outstanding fines, the system automatically changes the patron's card status in the `Reader` table from "Temporarily Suspended" back to "Active."
 6.	The system displays a notification confirming the successful payment update.
 
-19.3. System State Before Use-Case Execution: The patron has a fine slip with an unpaid status, and the librarian has selected the correct fine slip to process.
+*19.3. System State Before Use-Case Execution: The patron has a fine slip with an unpaid status, and the librarian has selected the correct fine slip to process.*
 
-19.4. System State After Use-Case Execution: The fine slip status is updated to "Paid" in the database, and the patron's account is unblocked, restoring normal borrowing privileges.
+*19.4. System State After Use-Case Execution: The fine slip status is updated to "Paid" in the database, and the patron's account is unblocked, restoring normal borrowing privileges.*
 
-19.5. Extension Points:
+*19.5. Extension Points*
 
 o	Print Receipt Use-Case: The system prints a fine payment receipt to provide to the patron for reconciliation purposes.
 
 **20. Use-case Print Receipt**
 
-20.1. Summary: Print a physical receipt at the counter to serve as proof of transaction completion (book loan slip, book return slip, or fine payment receipt) and hand it to the patron.
+*20.1. Summary: Print a physical receipt at the counter to serve as proof of transaction completion (book loan slip, book return slip, or fine payment receipt) and hand it to the patron.*
 
-20.2. Flow of Events:
+*20.2. Flow of Events*
 
-20.2.1. Main Flow:
+*20.2.1. Main Flow*
 
 1.	A circulation transaction (book loan, book return, or fine collection) is successfully confirmed in the system.
 2.	The system sends formatted receipt data (containing the transaction ID, patron's name, list of books/violations, amount, timestamp, and librarian's name) to the dedicated thermal printer connected at the counter.
 3.	The printer successfully outputs the physical receipt for the patron and logs the printing event in the system log file.
 
-20.3. System State Prior to Use Case Execution: The corresponding circulation transaction has been successfully recorded and stored in the database.
+*20.3. System State Prior to Use Case Execution: The corresponding circulation transaction has been successfully recorded and stored in the database.*
 
 **21. Use-case Manage Book Catalog**
 
-21.1. Summary: Enables librarians and administrators to manage the lifecycle of library books and materials, including functions to add new items, update information, and delete books.
+*21.1. Summary: Enables librarians and administrators to manage the lifecycle of library books and materials, including functions to add new items, update information, and delete books.*
 
-21.2. Flow of Events:
+*21.2. Flow of Events*
 
-21.2.1. Main Flow:
+*21.2.1. Main Flow*
 
 1.	The user selects the "Book Catalog Management" function on the system interface.
 2.	The system displays the complete list of existing book titles along with advanced search and filtering tools.
