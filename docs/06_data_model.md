@@ -1,1 +1,178 @@
+# 6. Data Model
 
+## 6.1 Database Schema Design
+
+<img width="940" height="1134" alt="image" src="https://github.com/user-attachments/assets/3d5e725c-1f62-4252-b7f1-5a45c53cdf33" />
+
+
+---
+
+## 6.2 Identify Entities and Attributes
+
+### 6.2.1 Design Overview
+The library management system is designed to automate the entire operational workflow, including information storage, document management, user management, and the handling of violations, ensuring synchronization and accuracy. 
+
+The system's database is structured around a data model comprising key functional modules, which can be categorized into three subgroups: 
+1. **Document Management**
+2. **User Management**
+3. **Circulation & Violation Management**
+
+Entities are tightly linked via Primary Keys (PK) and Foreign Keys (FK) to maintain referential integrity and prevent data duplication.
+
+---
+
+### 6.2.2 List of Entities
+
+#### Group 1: Document Management
+
+##### 1. Book Entity
+* **Description:** Stores detailed information about each book title and document in the library to support research activities, inventory management, and circulation processing.
+* **Attributes:**
+  * `BookID`: **PK (Primary Key)** – Unique identifier for each book.
+  * `Title`: The title of the book.
+  * `Description`: Provides a description of the book's content.
+  * `PublicationYear`: The year the document was published.
+  * `StockQuantity`: The number of copies currently available on the shelf.
+  * `Status`: The condition/availability of the book (Available / On borrow / Damaged).
+  * `AuthorID`: **FK (Foreign Key)** – References the `Author` table to identify the author.
+  * `PublisherID`: **FK (Foreign Key)** – References the `Publisher` table to identify the publisher.
+  * `CategoryID`: **FK (Foreign Key)** – References the `Category` table to identify the category.
+* **Design Note:** Linked to reference tables (`Author`, `Publisher`, `Category`) to avoid redundancy and support multi-criteria filtering for readers.
+
+##### 2. Author Entity
+* **Description:** Stores personal information and biographies of authors whose works are held in the library.
+* **Attributes:**
+  * `AuthorID`: **PK (Primary Key)** – Unique identifier for each author.
+  * `BookID`: **FK (Foreign Key)** – References the `Book` table to identify the book type.
+  * `AuthorName`: Full name of the author.
+  * `Description`: Brief overview of the author's life and career.
+  * `DOB`: Author's date of birth.
+  * `DOD`: Author's date of death (if applicable).
+* **Design Note:** Acts as a reference table for the `Book` entity. An author can be associated with multiple books in the system (One-to-Many relationship).
+
+##### 3. Publisher Entity
+* **Description:** Stores information about book publishing and distribution entities.
+* **Attributes:**
+  * `PublisherID`: **PK (Primary Key)** – Unique identifier for the publisher.
+  * `BookID`: **FK (Foreign Key)** – References the `Book` table to identify the book type.
+  * `Name`: Name of the publisher.
+  * `Address`: Publisher's headquarters address.
+  * `Phone`: Publisher's phone number.
+  * `Email`: Publisher's email address.
+  * `Website`: Publisher's official website.
+* **Design Note:** Provides data reference for the `Book` entity to manage the original publishing source of the material.
+
+##### 4. Category Entity
+* **Description:** Defines the classification of subject categories within the library (e.g., Information Technology, Textbooks, Literature, etc.).
+* **Attributes:**
+  * `CategoryID`: **PK (Primary Key)** – Unique identifier for the category.
+  * `CategoryName`: Name of the book category.
+  * `BookID`: **FK (Foreign Key)** – References the `Book` table to identify the book type.
+* **Design Note:** Supports the analysis of library materials within the system (OPAC), facilitating easy filtering and searching.
+
+---
+
+#### Group 2: User Management
+
+##### 5. Reader Entity
+* **Description:** Stores personal profiles, online login accounts, and activity statuses of readers registered for library cards.
+* **Attributes:**
+  * `ReaderID`: **PK (Primary Key)** – Unique reader identifier.
+  * `FullName`: Reader's full name.
+  * `DOB`: Date of birth.
+  * `Phone`: Contact phone number.
+  * `Email`: Personal email address.
+  * `Address`: Permanent or temporary residence address.
+  * `CCCD`: Reader's Citizen Identity Card number.
+  * `CardStartDate`: Date the library card was created.
+  * `CardExpiryDate`: Library card expiration date.
+  * `Username`: Username for the OPAC portal.
+  * `Password`: Login password (securely encrypted).
+* **Design Note:** Account attributes are integrated directly into the table to allow readers to manage their borrowing history, renewals, or online book reservations without requiring a separate account table.
+
+##### 6. Admin Entity
+* **Description:** Stores identification and account information for high-level administrators with full system management privileges.
+* **Attributes:**
+  * `AdminID`: **PK (Primary Key)** – Unique identifier for the administrator.
+  * `AdminName`: Administrator's full name.
+  * `Email`: Official email address.
+  * `Phone`: Contact phone number.
+  * `CCCD`: Administrator's Citizen Identity Card number.
+  * `Salary`: Base salary.
+  * `Username`: Username for the administration system.
+  * `Password`: Login password (encrypted).
+* **Design Note:** Privileged management functions include creating staff accounts, configuring system parameters, and generating financial or circulation reports.
+
+##### 7. Staff Entity
+* **Description:** Stores personal information, position, salary, and account details of library staff members who operate directly at the service counter.
+* **Attributes:**
+  * `StaffID`: **PK (Primary Key)** – Unique staff identifier.
+  * `Name_Staff`: Staff member's full name.
+  * `Gender`: Male/Female.
+  * `DOB_Staff`: Staff member's date of birth.
+  * `Phone`: Personal phone number.
+  * `Email`: Contact email address.
+  * `Address`: Permanent residential address.
+  * `CCCD`: Staff member's Citizen Identity Card number.
+  * `Salary`: Base salary.
+  * `NameLogin_Staff`: Login account for the management application.
+  * `Password_Staff`: Login password (encrypted).
+  * `ManagedBy_AdminID`: **FK (Foreign Key)** – ID of the administrator directly supervising this librarian (references `AdminID` in the `Admin` table).
+* **Design Note:** The `ManagedBy_AdminID` foreign key links directly to the `Admin` table to establish a structured personnel management relationship.
+
+##### 8. Guest Entity
+* **Description:** Represents a casual user who has not logged into the system and performs only public searches.
+* **Attributes (Virtual entity for business process modeling):**
+  * `SessionID`: Temporary access session ID.
+  * `SearchKeyword`: Keyword used for searching materials.
+* **Design Note:** This entity is not represented in the actual database but is used in the design of Use-case diagrams and Data Flow Diagrams (DFD).
+
+---
+
+#### Group 3: Circulation & Violation Management
+
+##### 9. BorrowRecord Entity
+* **Description:** Records general information regarding a book borrowing transaction initiated at the library.
+* **Attributes:**
+  * `TransactionID`: **PK (Primary Key)** – Unique borrowing slip identifier.
+  * `ReaderID`: **FK (Foreign Key)** – References the `Reader` table to identify the borrower.
+  * `StaffID`: **FK (Foreign Key)** – References the `Staff` table to identify the librarian who created the slip.
+  * `DateBorrow`: Date the reader borrowed the book(s).
+  * `DueDate`: Scheduled deadline for returning the book(s).
+* **Design Note:** Acts as an intermediary table connecting readers and librarians. Details regarding specific borrowed books are separated into the `BorrowDetail` table to achieve a higher normalization level.
+
+##### 10. BorrowDetail Entity
+* **Description:** Stores specific details for each book included in a borrowing slip; supports the management of individual book returns and the monitoring of physical condition.
+* **Attributes:**
+  * `BorrowDetail_ID`: **PK (Primary Key)** – Unique identifier for the borrowing detail record.
+  * `TransactionID`: **FK (Foreign Key)** – Links directly to the `BorrowRecord` entity.
+  * `BookID`: **FK (Foreign Key)** – Links to the `Book` entity to identify the borrowed book.
+  * `BookStatus`: Condition of the book upon return (Intact, torn cover, missing pages, etc.).
+  * `Description`: Provides a detailed description of the book's condition and whether it arrived on time or early.
+  * `ActualReturnDate`: The actual date the reader returned the book to the library.
+  * `DateIssued`: The date the system or librarian creates the detailed record.
+* **Design Note:** Separating this table facilitates a high level of normalization (3NF) and addresses the scenario where a single borrow record may involve multiple different books.
+
+##### 11. FineReceipt Entity
+* **Description:** Records information regarding the handling of library policy violations, such as overdue returns, or the loss or damage of materials.
+* **Attributes:**
+  * `FineID`: **PK (Primary Key)** – Unique identifier for the fine receipt.
+  * `TransactionID`: **FK (Foreign Key)** – References the specific borrow transaction associated with the violation.
+  * `Describe`: Specific description of the fine (e.g., X days overdue, damaged book).
+  * `Amount`: The compensation or fine amount to be paid.
+  * `PaymentStatus`: Status of the fine payment (Pending / Paid).
+* **Design Note:** Closely linked to the library's circulation and financial management processes; allows for the implementation of triggers to automatically calculate fines based on the number of overdue days.
+
+##### 12. FineReceiptDetail Entity
+* **Description:** Stores specific details regarding the handling of library regulation violations.
+* **Attributes:**
+  * `FineReceiptDetailID`: **PK (Primary Key)** – Unique identifier for the fine detail record.
+  * `FineID`: **FK (Foreign Key)** – References the `FineReceipt` table to link with the fine receipt.
+  * `ReaderID`: **FK (Foreign Key)** – References the `Reader` table to identify the reader.
+  * `FineReceiptStatus`: Processing status of the specific fine record.
+  * `DateBorrow`: Date the reader borrowed the book involved in the violation.
+  * `DueDate`: Date the reader returned the book involved in the violation.
+  * `Describe`: Detailed description of the violation/issue.
+  * `DateIssued`: Date the system or librarian created the fine detail record.
+  * `Amount`: Fine amount incurred specifically for the book involved in the violation.
+* **Design Note:** Separating the `FineReceiptDetail` entity enables the database to achieve a high level of normalization (3NF) and effectively addresses scenarios where a single late return involves multiple damaged books with varying fine amounts, thereby ensuring financial reporting transparency for each collected fee.
