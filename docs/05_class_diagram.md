@@ -62,7 +62,7 @@ The Class Diagram models the static structural view of the Library Management Sy
 * **Attributes:** Unique identifiers (`AuthorID`, `CategoryID`, `PublisherID`), descriptive names, contact details, and location details.
 * **Methods:** Methods include profile updates (`updatePhone()`, `updateCategoryName()`) and lookup actions (`getBooksWritten()`, `getBooksInCategory()`).
 
-<img width="937" height="963" alt="image" src="https://github.com/user-attachments/assets/130baf8f-3cc5-4f70-bb22-2840b22bae91" />
+<img width="940" height="966" alt="image" src="https://github.com/user-attachments/assets/d79d5c50-f06d-4f88-ad2b-aff4df5f9158" />
 
 ---
 
