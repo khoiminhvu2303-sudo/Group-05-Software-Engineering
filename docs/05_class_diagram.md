@@ -3,8 +3,6 @@
 ## 5.1 Architecture Overview
 The Class Diagram models the static structural view of the Library Management System. It illustrates the system's domain entities, their internal attributes, operational methods, and structural relationships. The domain model is categorized into three main functional groups: User Management (Reader, Staff, Admin), Material Management (Book, Author, Category, Publisher), and Circulation Management (BorrowRecord, BorrowDetail, FineReceipt, FineReceiptDetail).
 
----
-
 ## 5.2 Class Descriptions and Specifications
 
 ### 1. Reader
