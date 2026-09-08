@@ -102,8 +102,8 @@ CREATE TABLE FineReceipt (
     FineID CHAR(10) PRIMARY KEY,
     transactionID CHAR(10) NOT NULL,
     Note VARCHAR(255),
-    amount DECIMAL(10,2) NOT NULL,
-    paymentStatus VARCHAR(50) DEFAULT 'Unpaid',
+    Amount DECIMAL(12,2) NOT NULL,
+    PaymentStatus VARCHAR(50) DEFAULT 'Unpaid',
 
     CONSTRAINT FK_FineReceipt_BorrowRecord FOREIGN KEY (transactionID) REFERENCES BorrowRecord(transactionID)
 );
