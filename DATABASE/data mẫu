@@ -1,4 +1,4 @@
--- Thêm dữ liệu Staff mẫu (Liên kết với ADM001)
+-- Thêm dữ liệu Staff mẫu
 INSERT INTO Staff (StaffID, StaffName, Gender, Birthday_Staff, Numberphone, Address, CCCD, Salary, NameLogin_Staff, Password_Staff, managedByAdminID) VALUES
 ('NV001', 'Trần Văn Lâm', 'Nam', '1995-04-12', '0912345678', 'Ho Chi Minh City', '075207011378', 10000000, 'thuthu@library.vn', '123456', 'ADM001'),
 ('NV002', 'Nguyễn Thị Mai', 'Nữ', '1998-08-20', '0923456789', 'Ho Chi Minh City', '079207018158', 9500000, 'mainguyen@library.vn', '123456', 'ADM001'),
