@@ -1,57 +1,21 @@
 Create Database LIBRARY MANAGEMENT SYSTEM;
 Use LIBRARY MANAGEMENT SYSTEM;
+
 Drop table if exists Reader;
-Drop table if exists Publisher;
+Drop table if exists Staff;
+Drop table if exists Admin;
+Drop table if exists Author;
+Drop table if exists Book;
+Drop table if exists BookCopy;
 Drop table if exists Category;
-
-Create table Category (
-CategoryID Char(10) Primary Key NOT NULL,
-CategoryName Varchar(50) NOT NULL,
-BookID Char(10) 
-);
-Create table Publisher ( 
-PublisherID Char(10) Primary Key NOT NULL,
-Name Varchar(50) NOT NULL,
-Address Varchar(50) NULL,
-Phone Char(10) NULL,
-Email Varchar(50) NULL,
-Website Varchar(50) NULL,
-CONSTRAINT UQ_Publisher_Name UNIQUE (Name),
-CONSTRAINT UQ_Publisher_Address UNIQUE (Address),
-CONSTRAINT UQ_Publisher_Phone UNIQUE (Phone),
-CONSTRAINT UQ_Publisher_Email UNIQUE (Email),
-CONSTRAINT UQ_Publisher_Website UNIQUE (Website)
-);
-Create table Reader ( 
-ReaderID Char(10) Primary Key NOT NULL,
-FullName varchar(50) NOT NULL,
-DOB date NULL,
-Phone Char(10) NULL,
-Gender Char(10) NOT NULL,
-Email varchar(50) NULL,
-Address varchar(50) NULL,
-CCCD char(12) NULL,
-StartDate date NOT NULL,
-ExpiryDate date NOT NULL,
-Username varchar(50) NOT NULL,
-Password varchar(50) NOT NULL,
-Status Varchar(50) NOT NULL DEFAULT 'Active',
-CONSTRAINT UQ_Reader_Phone UNIQUE (Phone),
-CONSTRAINT UQ_Reader_Email UNIQUE (Email),
-CONSTRAINT UQ_Reader_CCCD UNIQUE (CCCD),
-CONSTRAINT UQ_Reader_Username UNIQUE (Username),
-CONSTRAINT CHK_Reader_Status CHECK (Status IN ('Active', 'Locked', 'Suspended')),
-CONSTRAINT CHK_Reader_Dates CHECK (ExpiryDate > StartDate)
-);
-
--- NGUYEN DUONG GIA HUY
-
-CREATE DATABASE IF NOT EXISTS LIBRARY_MANAGEMENT_SYSTEM;
-USE LIBRARY_MANAGEMENT_SYSTEM;
-
-DROP TABLE IF EXISTS Staff;
-DROP TABLE IF EXISTS Author;
-DROP TABLE IF EXISTS Admin;
+Drop table if exists Wishlist;
+Drop table if exists Publish;
+Drop table if exists Reservation;
+Drop table if exists BorrowRecord;
+Drop table if exists BorrowDetail;
+Drop table if exists FineReceipt;
+Drop table if exists DetailFine;
+Drop table if exists Auditlog;
 
 CREATE TABLE Admin (
     AdminID CHAR(10) PRIMARY KEY,
@@ -63,7 +27,7 @@ CREATE TABLE Admin (
     Salary DECIMAL(12,2),
     NameLogin_Admin VARCHAR(50) NOT NULL UNIQUE,
     Password_Admin VARCHAR(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 CREATE TABLE Staff (
     StaffID CHAR(10) PRIMARY KEY,
@@ -83,7 +47,7 @@ CREATE TABLE Staff (
     CONSTRAINT FK_Staff_Admin FOREIGN KEY (ManagedByAdminID) REFERENCES Admin(AdminID)
         ON DELETE SET NULL 
         ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 CREATE TABLE Author (
     AuthorID CHAR(10) PRIMARY KEY,
@@ -91,78 +55,4 @@ CREATE TABLE Author (
     `Describe` VARCHAR(50),
     Birthday DATE,
     Deathday DATE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- PHAM MINH TAN
-CREATE TABLE IF NOT EXISTS Book (
-    BookID CHAR(10) PRIMARY KEY,
-    Title VARCHAR(50) NOT NULL,
-    `Describe` TEXT,
-    Publication DATE,
-    Stockquantity INT,
-    Status VARCHAR(50) DEFAULT 'Available',
-    AuthorID CHAR(10) NOT NULL,
-    PublisherID CHAR(10) NOT NULL,
-    CategoryID CHAR(10) NOT NULL,
-    CONSTRAINT FK_Book_Author FOREIGN KEY (AuthorID) REFERENCES Author(AuthorID),
-    CONSTRAINT FK_Book_Publisher FOREIGN KEY (PublisherID) REFERENCES Publisher(PublisherID),
-    CONSTRAINT FK_Book_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
-);
-
-CREATE TABLE IF NOT EXISTS BookCopy (
-    CopyID CHAR(10) PRIMARY KEY,
-    BookID CHAR(10) NOT NULL,
-    Barcode VARCHAR(50) NOT NULL UNIQUE,
-    Status VARCHAR(50) DEFAULT 'Available' 
-        CHECK (Status IN ('Available', 'Borrowed', 'Reserved', 'Lost', 'Damaged')),
-    `Condition` VARCHAR(50),
-    Price DECIMAL(12,2),
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedAt DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_BookCopy_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
-);
-
-CREATE TABLE IF NOT EXISTS Reservation (
-    ReservationID CHAR(10) PRIMARY KEY,
-    ReaderID CHAR(10) NOT NULL,
-    CopyID CHAR(10) NOT NULL,
-    ReservationDate DATETIME DEFAULT GETDATE(),
-    ExpiryDate DATETIME NOT NULL,
-    Status VARCHAR(50),
-    QRCode VARCHAR(255),
-    Note TEXT,
-    CONSTRAINT FK_Reservation_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
-    CONSTRAINT FK_Reservation_Copy FOREIGN KEY (CopyID) REFERENCES BookCopy(CopyID)
-);
-
--- Vu Minh Khoi
-CREATE TABLE IF NOT EXISTS FineReceipt (
-    FineID CHAR(10) PRIMARY KEY,
-    transactionID CHAR(10) NOT NULL,
-    `Describe` VARCHAR(50),
-    amount DECIMAL(10,2) NOT NULL,
-    paymentStatus VARCHAR(50) DEFAULT 'Unpaid' 
-        CHECK (paymentStatus IN ('Unpaid', 'Paid', 'Cancelled')),
-    CONSTRAINT FK_FineReceipt_BorrowRecord FOREIGN KEY (transactionID) REFERENCES BorrowRecord(transactionID)
-);
-
-CREATE TABLE IF NOT EXISTS WishList (
-    WishListID CHAR(10) PRIMARY KEY,
-    ReaderID CHAR(10) NOT NULL,
-    BookID CHAR(10) NOT NULL,
-    AddedData DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Note TEXT,
-    CONSTRAINT FK_WishList_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
-    CONSTRAINT FK_WishList_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
-);
-
-CREATE TABLE IF NOT EXISTS AuditLog (
-    LogID CHAR(10) PRIMARY KEY,
-    UserID CHAR(10) NOT NULL,
-    UserRole VARCHAR(20) NOT NULL 
-        CHECK (UserRole IN ('Reader', 'Staff', 'Admin')),
-    Action VARCHAR(50) NOT NULL,
-    TableName VARCHAR(50),
-    Description TEXT,
-    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
