@@ -14,3 +14,18 @@ INSERT INTO Author (AuthorID, BookID, AuthorName, `Describe`, Birthday, Deathday
 ('AUT002', 'BK002', 'Paulo Coelho', 'Tác giả cuốn Nhà Giả Kim', '1947-08-24', NULL),
 ('AUT003', 'BK003', 'Yuval Noah Harari', 'Tác giả cuốn Sapiens: Lược Sử Loài Người', '1976-02-24', NULL),
 ('AUT004', 'BK004', 'James Clear', 'Tác giả cuốn Atomic Habits', '1986-01-22', NULL);
+
+INSERT INTO FineReceipt (FineID, transactionID, Note, amount, paymentStatus) VALUES
+('FR00000001', 'TR00000001', 'Phạt trễ hạn trả sách 3 ngày', 15000.00, 'Paid'),
+('FR00000002', 'TR00000003', 'Phạt làm hỏng trang sách 12-15', 50000.00, 'Unpaid'),
+('FR00000003', 'TR00000005', 'Phạt trễ hạn trả sách 7 ngày', 35000.00, 'Unpaid');
+
+INSERT INTO WishList (WishListID, ReaderID, BookID, AddedData, Note) VALUES
+('WL00000001', 'RD00000001', 'BK00000002', '2026-08-15 09:30:00', 'Muốn đọc bản tiếng Việt mới tái bản'),
+('WL00000002', 'RD00000002', 'BK00000005', '2026-08-20 14:15:00', 'Sách đang hết lượt mượn, chờ thông báo'),
+('WL00000003', 'RD00000001', 'BK00000010', '2026-09-01 10:05:00', 'Cần mượn làm tài liệu tham khảo bài luận');
+
+INSERT INTO Auditlog (LogID, UserID, UserRole, Action, TableName, Description, CreatedAt) VALUES
+('LOG0000001', 'RD00000001', 'Reader', 'CREATE_RESERVATION', 'Reservation', 'Độc giả đặt trước sách BK00000002', '2026-09-01 08:30:00'),
+('LOG0000002', 'ST00000001', 'Staff', 'UPDATE_FINE', 'FineReceipt', 'Xác nhận thanh toán biên lai FR00000001', '2026-09-02 11:20:00'),
+('LOG0000003', 'AD00000001', 'Admin', 'ADD_STAFF', 'Staff', 'Thêm nhân viên mới vào hệ thống', '2026-09-05 16:45:00');
