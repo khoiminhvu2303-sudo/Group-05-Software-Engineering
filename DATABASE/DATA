@@ -80,8 +80,8 @@ CREATE TABLE BookCopy (
         CHECK (Status IN ('Available', 'Borrowed', 'Reserved', 'Lost', 'Damaged')),
     `Condition` VARCHAR(50),
     Price DECIMAL(12,2),
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedAt DATETIME DEFAULT GETDATE(),
+    CreatedAt DATETIME DEFAULT NOW(),
+    UpdatedAt DATETIME DEFAULT NOW(),
     CONSTRAINT FK_BookCopy_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
 
@@ -89,7 +89,7 @@ CREATE TABLE Reservation (
     ReservationID CHAR(10) PRIMARY KEY,
     ReaderID CHAR(10) NOT NULL,
     CopyID CHAR(10) NOT NULL,
-    ReservationDate DATETIME DEFAULT GETDATE(),
+    ReservationDate DATETIME DEFAULT NOW(),
     ExpiryDate DATETIME NOT NULL,
     Status VARCHAR(50),
     QRCode VARCHAR(255),
