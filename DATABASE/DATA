@@ -43,7 +43,9 @@ CONSTRAINT UQ_Reader_Username UNIQUE (Username),
 CONSTRAINT CHK_Reader_Status CHECK (Status IN ('Active', 'Locked', 'Suspended')),
 CONSTRAINT CHK_Reader_Dates CHECK (ExpiryDate > StartDate)
 );
-Nguyen_Duong_Gia_Huy
+
+-- NGUYEN DUONG GIA HUY
+
 CREATE DATABASE IF NOT EXISTS LIBRARY_MANAGEMENT_SYSTEM;
 USE LIBRARY_MANAGEMENT_SYSTEM;
 
@@ -52,38 +54,39 @@ DROP TABLE IF EXISTS Author;
 DROP TABLE IF EXISTS Admin;
 
 CREATE TABLE Admin (
-    AdminID Char(10) PRIMARY KEY,
-    AdminName Varchar(50) NOT NULL,
-    Email Varchar(50) UNIQUE,
-    Phone Char(10),
-    CCCD Char(12) UNIQUE,
-    Salary Decimal(12,2),
-    NameLogin_Admin Varchar(50) NOT NULL UNIQUE,
-    Password_Admin Varchar(50) NOT NULL
+    AdminID CHAR(10) PRIMARY KEY,
+    AdminName VARCHAR(50) NOT NULL,
+    Gender VARCHAR(10),
+    Email VARCHAR(50) UNIQUE,
+    Phone CHAR(10),
+    CCCD CHAR(12) UNIQUE,
+    Salary DECIMAL(12,2),
+    NameLogin_Admin VARCHAR(50) NOT NULL UNIQUE,
+    Password_Admin VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE Staff (
-    StaffID Char(10) PRIMARY KEY,
-    StaffName varchar(50) NOT NULL,
-    gender varchar(50),
-    Birthday_Staff date,
-    Numberphone char(10),
-    email varchar(50) UNIQUE,
-    address varchar(50),
-    CCCD char(12) UNIQUE,
-    salary double,
-    NameLogin_Staff varchar(50) NOT NULL UNIQUE,
-    Password_Staff varchar(50) NOT NULL,
-    Status Varchar(50),
-    managedByAdminID char(10),
+    StaffID CHAR(10) PRIMARY KEY,
+    StaffName VARCHAR(50) NOT NULL,
+    Gender VARCHAR(10),
+    Birthday_Staff DATE,
+    Numberphone CHAR(10),
+    Email VARCHAR(50) UNIQUE,
+    Address VARCHAR(50),
+    CCCD CHAR(12) UNIQUE,
+    Salary DOUBLE,
+    NameLogin_Staff VARCHAR(50) NOT NULL UNIQUE,
+    Password_Staff VARCHAR(50) NOT NULL,
+    Status VARCHAR(50),
+    ManagedByAdminID CHAR(10),
     
-    FOREIGN KEY (managedByAdminID) REFERENCES Admin(AdminID)
-        ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT FK_Staff_Admin FOREIGN KEY (ManagedByAdminID) REFERENCES Admin(AdminID)
+        ON DELETE SET NULL 
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE Author (
     AuthorID CHAR(10) PRIMARY KEY,
-    BookID CHAR(10),
     AuthorName VARCHAR(50) NOT NULL,
     `Describe` VARCHAR(50),
     Birthday DATE,
