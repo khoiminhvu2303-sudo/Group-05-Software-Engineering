@@ -9,7 +9,7 @@ Drop table if exists Book;
 Drop table if exists BookCopy;
 Drop table if exists Category;
 Drop table if exists Wishlist;
-Drop table if exists Publish;
+Drop table if exists Publisher;
 Drop table if exists Reservation;
 Drop table if exists BorrowRecord;
 Drop table if exists BorrowDetail;
