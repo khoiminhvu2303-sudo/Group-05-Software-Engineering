@@ -57,6 +57,47 @@ CREATE TABLE Author (
     Deathday DATE
 );
 
+CREATE TABLE IF NOT EXISTS Book (
+    BookID CHAR(10) PRIMARY KEY,
+    Title VARCHAR(50) NOT NULL,
+    `Describe` TEXT,
+    Publication DATE,
+    Stockquantity INT,
+    Status VARCHAR(50) DEFAULT 'Available',
+    AuthorID CHAR(10) NOT NULL,
+    PublisherID CHAR(10) NOT NULL,
+    CategoryID CHAR(10) NOT NULL,
+    CONSTRAINT FK_Book_Author FOREIGN KEY (AuthorID) REFERENCES Author(AuthorID),
+    CONSTRAINT FK_Book_Publisher FOREIGN KEY (PublisherID) REFERENCES Publisher(PublisherID),
+    CONSTRAINT FK_Book_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
+);
+
+CREATE TABLE IF NOT EXISTS BookCopy (
+    CopyID CHAR(10) PRIMARY KEY,
+    BookID CHAR(10) NOT NULL,
+    Barcode VARCHAR(50) NOT NULL UNIQUE,
+    Status VARCHAR(50) DEFAULT 'Available' 
+        CHECK (Status IN ('Available', 'Borrowed', 'Reserved', 'Lost', 'Damaged')),
+    `Condition` VARCHAR(50),
+    Price DECIMAL(12,2),
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_BookCopy_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
+);
+
+CREATE TABLE IF NOT EXISTS Reservation (
+    ReservationID CHAR(10) PRIMARY KEY,
+    ReaderID CHAR(10) NOT NULL,
+    CopyID CHAR(10) NOT NULL,
+    ReservationDate DATETIME DEFAULT GETDATE(),
+    ExpiryDate DATETIME NOT NULL,
+    Status VARCHAR(50),
+    QRCode VARCHAR(255),
+    Note TEXT,
+    CONSTRAINT FK_Reservation_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
+    CONSTRAINT FK_Reservation_Copy FOREIGN KEY (CopyID) REFERENCES BookCopy(CopyID)
+);
+
 CREATE TABLE FineReceipt (
     FineID CHAR(10) PRIMARY KEY,
     transactionID CHAR(10) NOT NULL,
