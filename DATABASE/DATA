@@ -136,48 +136,33 @@ CREATE TABLE IF NOT EXISTS Reservation (
 );
 
 -- Vu Minh Khoi
-CREATE DATABASE IF NOT EXISTS LIBRARY_MANAGEMENT_SYSTEM;
-USE LIBRARY_MANAGEMENT_SYSTEM;
+CREATE TABLE IF NOT EXISTS FineReceipt (
+    FineID CHAR(10) PRIMARY KEY,
+    transactionID CHAR(10) NOT NULL,
+    `Describe` VARCHAR(50),
+    amount DECIMAL(10,2) NOT NULL,
+    paymentStatus VARCHAR(50) DEFAULT 'Unpaid' 
+        CHECK (paymentStatus IN ('Unpaid', 'Paid', 'Cancelled')),
+    CONSTRAINT FK_FineReceipt_BorrowRecord FOREIGN KEY (transactionID) REFERENCES BorrowRecord(transactionID)
+);
 
-DROP TABLE IF EXISTS FineReceipt;
-DROP TABLE IF EXISTS WishList;
-DROP TABLE IF EXISTS AuditLog;
-CREATE TABLE FineReceipt (
-    FineID Char(10) PRIMARY KEY,
-    transactionID Char(10) NOT NULL,
-    `Describe` Varchar(50),
-    amount Decimal(10,2) NOT NULL,
-    paymentStatus Varchar(50) DEFAULT 'Chưa thanh toán',
-    
-    CONSTRAINT FK_FineReceipt_BorrowRecord 
-        FOREIGN KEY (transactionID) REFERENCES BorrowRecord(transactionID)
-        ON DELETE CASCADE 
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS WishList (
+    WishListID CHAR(10) PRIMARY KEY,
+    ReaderID CHAR(10) NOT NULL,
+    BookID CHAR(10) NOT NULL,
+    AddedData DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Note TEXT,
+    CONSTRAINT FK_WishList_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
+    CONSTRAINT FK_WishList_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
+);
 
-CREATE TABLE WishList (
-    WishListID Char(10) PRIMARY KEY,
-    ReaderID Char(10) NOT NULL,
-    BookID Char(10) NOT NULL,
-    AddedData Datetime DEFAULT CURRENT_TIMESTAMP,
-    Note Text,
-    
-    CONSTRAINT FK_WishList_Reader 
-        FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID)
-        ON DELETE CASCADE 
-        ON UPDATE CASCADE,
-    CONSTRAINT FK_WishList_Book 
-        FOREIGN KEY (BookID) REFERENCES Book(BookID)
-        ON DELETE CASCADE 
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE AuditLog (
-    LogID Char(10) PRIMARY KEY,
-    UserID Char(10) NOT NULL,
-    UserRole Varchar(20) NOT NULL,
-    Action Varchar(50) NOT NULL,
-    TableName Varchar(50),
-    Description Text,
-    CreatedAt Datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS AuditLog (
+    LogID CHAR(10) PRIMARY KEY,
+    UserID CHAR(10) NOT NULL,
+    UserRole VARCHAR(20) NOT NULL 
+        CHECK (UserRole IN ('Reader', 'Staff', 'Admin')),
+    Action VARCHAR(50) NOT NULL,
+    TableName VARCHAR(50),
+    Description TEXT,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
