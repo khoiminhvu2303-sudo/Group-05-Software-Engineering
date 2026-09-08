@@ -56,3 +56,34 @@ CREATE TABLE Author (
     Birthday DATE,
     Deathday DATE
 );
+
+CREATE TABLE FineReceipt (
+    FineID CHAR(10) PRIMARY KEY,
+    transactionID CHAR(10) NOT NULL,
+    `Describe` VARCHAR(50),
+    amount DECIMAL(10,2) NOT NULL,
+    paymentStatus VARCHAR(50) DEFAULT 'Unpaid',
+
+    CONSTRAINT FK_FineReceipt_BorrowRecord FOREIGN KEY (transactionID) REFERENCES BorrowRecord(transactionID)
+);
+
+CREATE TABLE WishList (
+    WishListID CHAR(10) PRIMARY KEY,
+    ReaderID CHAR(10) NOT NULL,
+    BookID CHAR(10) NOT NULL,
+    AddedData DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Note TEXT,
+
+    CONSTRAINT FK_WishList_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
+    CONSTRAINT FK_WishList_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
+);
+
+CREATE TABLE Auditlog (
+    LogID CHAR(10) PRIMARY KEY,
+    UserID CHAR(10) NOT NULL,
+    UserRole VARCHAR(20) NOT NULL,
+    Action VARCHAR(50) NOT NULL,
+    TableName VARCHAR(50),
+    Description TEXT,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
