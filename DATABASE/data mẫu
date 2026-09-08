@@ -29,3 +29,20 @@ INSERT INTO Auditlog (LogID, UserID, UserRole, Action, TableName, Description, C
 ('LOG0000001', 'RD00000001', 'Reader', 'CREATE_RESERVATION', 'Reservation', 'Độc giả đặt trước sách BK00000002', '2026-09-01 08:30:00'),
 ('LOG0000002', 'ST00000001', 'Staff', 'UPDATE_FINE', 'FineReceipt', 'Xác nhận thanh toán biên lai FR00000001', '2026-09-02 11:20:00'),
 ('LOG0000003', 'AD00000001', 'Admin', 'ADD_STAFF', 'Staff', 'Thêm nhân viên mới vào hệ thống', '2026-09-05 16:45:00');
+
+
+-- Thêm dữ liệu mẫu vào bảng Book: ở trong excel
+
+-- Thêm dữ liệu mẫu vào bảng BookCopy
+INSERT INTO BookCopy (CopyID, BookID, Barcode, Status, `Condition`, Price, CreatedAt, UpdatedAt) 
+VALUES 
+('CP00000001', 'B000000001', 'BC-MB-001', 'Available', N'Mới', 110000.00, '2024-01-15 08:30:00', '2024-01-15 08:30:00'),
+('CP00000002', 'B000000001', 'BC-MB-002', 'Borrowed', N'Cũ nhẹ', 110000.00, '2024-01-15 08:30:00', '2024-02-10 14:20:00'),
+('CP00000003', 'B000000002', 'BC-TV-001', 'Reserved', N'Mới', 85000.00, '2024-02-01 09:00:00', '2024-02-05 10:15:00'),
+('CP00000004', 'B000000003', 'BC-HP-001', 'Available', N'Mới', 250000.00, '2024-02-15 11:45:00', '2024-02-15 11:45:00');
+
+-- Thêm dữ liệu mẫu vào bảng Reservation
+INSERT INTO Reservation (ReservationID, ReaderID, CopyID, ReservationDate, ExpiryDate, Status, QRCode, Note) 
+VALUES 
+('RS00000001', 'DG001', 'CP00000001', '2024-01-14 09:30:00', '2024-01-15 09:30:00', 'Pending', 'QR_RS00000001_DATA', N'Đặt giữ sách trước 2 ngày'),
+('RS00000002', 'DG002', 'CP00000002', '2024-01-13 10:30:00', '2024-01-14 10:30:00', 'Completed', 'QR_RS00000002_DATA', N'Đã nhận sách tại quầy');
