@@ -57,7 +57,7 @@ CREATE TABLE Author (
     Deathday DATE
 );
 
-CREATE TABLE IF NOT EXISTS Book (
+CREATE TABLE Book (
     BookID CHAR(10) PRIMARY KEY,
     Title VARCHAR(50) NOT NULL,
     `Describe` TEXT,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS Book (
     CONSTRAINT FK_Book_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
 );
 
-CREATE TABLE IF NOT EXISTS BookCopy (
+CREATE TABLE BookCopy (
     CopyID CHAR(10) PRIMARY KEY,
     BookID CHAR(10) NOT NULL,
     Barcode VARCHAR(50) NOT NULL UNIQUE,
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS BookCopy (
     CONSTRAINT FK_BookCopy_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
 
-CREATE TABLE IF NOT EXISTS Reservation (
+CREATE TABLE Reservation (
     ReservationID CHAR(10) PRIMARY KEY,
     ReaderID CHAR(10) NOT NULL,
     CopyID CHAR(10) NOT NULL,
