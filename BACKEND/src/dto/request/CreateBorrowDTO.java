@@ -1,25 +1,30 @@
-package dto.request;
+package com.library.dto.request;
+
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateBorrowDTO {
+
+    @NotNull(message = "Reader ID is required")
     private String readerId;
+
+    @NotNull(message = "Staff ID is required")
     private String staffId;
+
+    @NotNull(message = "Due date is required")
     private LocalDate dueDate;
-    private List<String> bookIds;
 
-    public CreateBorrowDTO() {}
-
-    public String getReaderId() { return readerId; }
-    public void setReaderId(String readerId) { this.readerId = readerId; }
-
-    public String getStaffId() { return staffId; }
-    public void setStaffId(String staffId) { this.staffId = staffId; }
-
-    public LocalDate getDueDate() { return dueDate; }
-    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
-
-    public List<String> getBookIds() { return bookIds; }
-    public void setBookIds(List<String> bookIds) { this.bookIds = bookIds; }
+    @NotEmpty(message = "At least one book copy must be provided")
+    private List<String> copyIds;
 }
