@@ -155,8 +155,6 @@ library-management-backend/
 
 │   │   ├── StaffRepository.java
 
-│   │   └── CustomRepository.java        # Các query phức tạp
-
 │   │
 
 │   ├── entity/                          # JPA Entities (Database Models)
