@@ -129,14 +129,57 @@ CREATE TABLE Reservation (
     CONSTRAINT FK_Reservation_Copy FOREIGN KEY (CopyID) REFERENCES BookCopy(CopyID)
 );
 
+CREATE TABLE BorrowRecord (
+    BorrowID   INT AUTO_INCREMENT PRIMARY KEY,
+    ReaderID   INT NOT NULL,
+    StaffID    INT NOT NULL,                     -- nhân viên xử lý mượn
+    BorrowDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Status      DEFAULT 'Active'
+              CHECK (Status IN('Active', 'Completed'),  -- Active nếu còn sách chưa trả
+   CONSTRAINT FK_BorrowRecord_Reader FOREIGN KEY (readerID) REFERENCES Reader(readerID),
+   CONSTRAINT FK_BorrowRecord_StaffID FOREIGN KEY (staffID)  REFERENCES Staff(staffID)
+);
+
+CREATE TABLE BorrowDetail (
+    BorrowDetailID   INT AUTO_INCREMENT PRIMARY KEY,
+    BorrowID         INT NOT NULL,
+    CopyID           INT NOT NULL,
+    DueDate          DATE NOT NULL,              -- sẽ được trigger tự động tính
+    ActualReturnDate DATE NULL,                  -- null nếu chưa trả
+    RenewalCount     INT DEFAULT 0,
+    ReturnCondition  ENUM('Good', 'Damaged', 'Lost') NULL, -- ghi nhận khi trả
+    Status           DEFAULT 'On loan'
+                  CHECK (Status IN('On loan', 'Returned', 'Overdue'),
+   CONSTRAINT FK_BorrowDetail_BorrowRecord FOREIGN KEY (borrowID) REFERENCES BorrowRecord(borrowID) ON DELETE CASCADE,
+   CONSTRAINT FK_BorrowDetail_Bookcopy FOREIGN KEY (copyID)   REFERENCES BookCopy(copyID),
+   CONSTRAINT chk_borrow_detail_status CHECK (
+        (status = 'On loan' AND actualReturnDate IS NULL) OR
+        (status IN ('Returned', 'Overdue') AND actualReturnDate IS NOT NULL)
+    )
+);
+
 CREATE TABLE FineReceipt (
     FineID CHAR(10) PRIMARY KEY,
-    transactionID CHAR(10) NOT NULL,
+    TransactionID CHAR(10) NOT NULL,
     Note VARCHAR(255),
     Amount DECIMAL(12,2) NOT NULL,
     PaymentStatus VARCHAR(50) DEFAULT 'Unpaid',
 
     CONSTRAINT FK_FineReceipt_BorrowRecord FOREIGN KEY (transactionID) REFERENCES BorrowRecord(transactionID)
+);
+
+CREATE TABLE DetailFineReceipt (
+    FineID         INT AUTO_INCREMENT PRIMARY KEY,
+    BorrowDetailID INT NOT NULL UNIQUE,          -- mỗi chi tiết mượn chỉ có 1 phiếu phạt
+    StaffID        INT NULL,                     -- nhân viên thu phạt (null nếu chưa thu)
+    Reason         VARCHAR(255) NOT NULL,        -- mô tả vi phạm
+    Amount         DECIMAL(10,2) NOT NULL,
+    IssuedDate     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PaidDate       DATETIME NULL,
+    Status          DEFAULT 'Pending'
+            CHECK (Status IN('Pending', 'Paid', 'Void') ,
+  CONSTRAINT FK_DetailFineReceipt_DetailBorrowRecord  FOREIGN KEY (borrowDetailID) REFERENCES BorrowDetail(borrowDetailID),
+  CONSTRAINT FK_DetailFineReceipt_Staff FOREIGN KEY (staffID) REFERENCES Staff(staffID)
 );
 
 CREATE TABLE WishList (
@@ -145,7 +188,6 @@ CREATE TABLE WishList (
     BookID CHAR(10) NOT NULL,
     AddedData DATETIME DEFAULT CURRENT_TIMESTAMP,
     Note TEXT,
-
     CONSTRAINT FK_WishList_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
     CONSTRAINT FK_WishList_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
