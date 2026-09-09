@@ -17,6 +17,29 @@ Drop table if exists FineReceipt;
 Drop table if exists DetailFine;
 Drop table if exists Auditlog;
 
+Create table Reader ( 
+    ReaderID Char(10) Primary Key NOT NULL,
+    FullName varchar(50) NOT NULL,
+    DOB date NULL,
+    Phone Char(10) NULL,
+    Gender Char(10) NOT NULL,
+    Email varchar(50) NULL,
+    Address varchar(50) NULL,
+    CCCD char(12) NULL,
+    StartDate date NOT NULL,
+    ExpiryDate date NOT NULL,
+    Username varchar(50) NOT NULL,
+    Password varchar(50) NOT NULL,
+    Status Varchar(50) NOT NULL DEFAULT 'Active',
+
+    CONSTRAINT UQ_Reader_Phone UNIQUE (Phone),
+    CONSTRAINT UQ_Reader_Email UNIQUE (Email),
+    CONSTRAINT UQ_Reader_CCCD UNIQUE (CCCD),
+    CONSTRAINT UQ_Reader_Username UNIQUE (Username),
+    CONSTRAINT CHK_Reader_Status CHECK (Status IN ('Active', 'Locked', 'Suspended')),
+    CONSTRAINT CHK_Reader_Dates CHECK (ExpiryDate > StartDate)
+);
+
 CREATE TABLE Staff (
     StaffID CHAR(10) PRIMARY KEY,
     StaffName VARCHAR(50) NOT NULL,
@@ -85,6 +108,14 @@ CREATE TABLE BookCopy (
     CONSTRAINT FK_BookCopy_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
 
+Create table Category (
+    CategoryID Char(10) Primary Key NOT NULL,
+    CategoryName Varchar(50) NOT NULL,
+    BookID Char(10),
+
+    CONSTRAINT FK_Book_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
+);
+
 CREATE TABLE Reservation (
     ReservationID CHAR(10) PRIMARY KEY,
     ReaderID CHAR(10) NOT NULL,
@@ -117,6 +148,21 @@ CREATE TABLE WishList (
 
     CONSTRAINT FK_WishList_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
     CONSTRAINT FK_WishList_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
+);
+
+Create table Publisher ( 
+    PublisherID Char(10) Primary Key NOT NULL,
+    Name Varchar(50) NOT NULL,
+    Address Varchar(50) NULL,
+    Phone Char(10) NULL,
+    Email Varchar(50) NULL,
+    Website Varchar(50) NULL,
+
+    CONSTRAINT UQ_Publisher_Name UNIQUE (Name),
+    CONSTRAINT UQ_Publisher_Address UNIQUE (Address),
+    CONSTRAINT UQ_Publisher_Phone UNIQUE (Phone),
+    CONSTRAINT UQ_Publisher_Email UNIQUE (Email),
+    CONSTRAINT UQ_Publisher_Website UNIQUE (Website)
 );
 
 CREATE TABLE Auditlog (
