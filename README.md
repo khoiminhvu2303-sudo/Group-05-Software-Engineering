@@ -139,6 +139,8 @@ library-management-backend/
 
 │   │   ├── ReaderRepository.java
 
+│   │   ├── AdminRepository.java
+
 │   │   ├── BookRepository.java
 
 │   │   ├── BookCopyRepository.java
@@ -148,6 +150,14 @@ library-management-backend/
 │   │   ├── BorrowDetailRepository.java
 
 │   │   ├── FineReceiptRepository.java
+
+│   │   ├── AuthorRepository.java
+
+│   │   ├── PublisherRepository.java
+
+│   │   ├── CategoryRepository.java
+
+│   │   ├── AuditLogRepository.java
 
 │   │   ├── ReservationRepository.java
 
@@ -223,9 +233,16 @@ library-management-backend/
 
 │   │   ├── JwtAuthenticationFilter.java # Filter
 
+│   │   ├── JwtAuthenticationEntryPoint
+
+│   │   ├── CustomAccessDeniedHandler
+
 │   │   ├── CustomUserDetailsService.java# User load
 
-│   │   └── PasswordEncoderConfig.java   # Mã hóa mật khẩu
+│   │   ├── UserPrincipal
+
+│   │   └── UserRole
+
 
 │   │
 
