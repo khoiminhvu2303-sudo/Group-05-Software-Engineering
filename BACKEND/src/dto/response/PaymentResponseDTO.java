@@ -18,7 +18,7 @@ public class PaymentResponseDTO {
     private String fineId;
     private BigDecimal amount;
     private String paymentMethod;
-    private String paymentUrl; // Redirect URL to payment gateway (VNPay/MoMo)
-    private String status;     // PENDING, SUCCESS, FAILED
+    private String paymentUrl; 
+    private String status;     
     private LocalDateTime createdAt;
 }
