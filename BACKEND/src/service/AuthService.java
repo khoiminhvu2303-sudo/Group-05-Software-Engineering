@@ -1,29 +1,41 @@
-package service;
+package com.library.service.impl;
 
-import dto.request.CreateAuditLogDTO;
-import dto.request.LoginDTO;
+import com.library.dto.request.LoginDTO;
+import com.library.dto.request.RegisterReaderDTO;
+import com.library.dto.response.ReaderResponseDTO;
+import com.library.entity.Reader;
+import com.library.exception.AuthenticationException;
+import com.library.repository.ReaderRepository;
+import com.library.security.JwtTokenProvider;
+import com.library.service.AuthService;
+import com.library.service.ReaderService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-public class AuthService {
+@Service
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService {
 
-    private final AuditLogService auditLogService = new AuditLogService();
+    private final ReaderRepository readerRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider tokenProvider;
+    private final ReaderService readerService;
 
-    public String login(LoginDTO loginDTO) {
-        // TODO: Authenticate user credentials
-        String userId = "RD00000001";
+    @Override
+    public String login(LoginDTO request) {
+        Reader reader = readerRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new AuthenticationException("Invalid username or password"));
 
-        auditLogService.log(new CreateAuditLogDTO(
-            userId,
-            "READER",
-            "LOGIN",
-            "Reader",
-            "User " + loginDTO.getUsername() + " logged in successfully"
-        ));
+        if (!passwordEncoder.matches(request.getPassword(), reader.getPassword())) {
+            throw new AuthenticationException("Invalid username or password");
+        }
 
-        return "JWT_TOKEN_EXAMPLE";
+        return tokenProvider.generateToken(reader.getUsername());
     }
 
-    public boolean changePassword(String userId, String oldPass, String newPass) {
-        // TODO: Update user password
-        return true;
+    @Override
+    public ReaderResponseDTO register(RegisterReaderDTO request) {
+        return readerService.registerReader(request);
     }
 }
