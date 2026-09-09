@@ -1,53 +1,45 @@
-package dto.request;
+package com.library.dto.request;
 
-import java.math.BigDecimal;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateStaffDTO {
+
+    @NotBlank(message = "Staff name is required")
     private String staffName;
+
     private String gender;
-    private LocalDate birthdayStaff;
-    private String numberphone;
+
+    private LocalDate birthday;
+
+    private String phone;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
+
     private String address;
+
+    @NotBlank(message = "CCCD is required")
     private String cccd;
-    private BigDecimal salary;
-    private String nameLoginStaff;
-    private String passwordStaff;
-    private String managedByAdminId;
 
-    public CreateStaffDTO() {}
+    private Double salary;
 
-    public String getStaffName() { return staffName; }
-    public void setStaffName(String staffName) { this.staffName = staffName; }
+    @NotBlank(message = "Username is required")
+    private String nameLogin;
 
-    public String getGender() { return gender; }
-    public void setGender(String gender) { this.gender = gender; }
+    @NotBlank(message = "Password is required")
+    private String password;
 
-    public LocalDate getBirthdayStaff() { return birthdayStaff; }
-    public void setBirthdayStaff(LocalDate birthdayStaff) { this.birthdayStaff = birthdayStaff; }
-
-    public String getNumberphone() { return numberphone; }
-    public void setNumberphone(String numberphone) { this.numberphone = numberphone; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public String getCccd() { return cccd; }
-    public void setCccd(String cccd) { this.cccd = cccd; }
-
-    public BigDecimal getSalary() { return salary; }
-    public void setSalary(BigDecimal salary) { this.salary = salary; }
-
-    public String getNameLoginStaff() { return nameLoginStaff; }
-    public void setNameLoginStaff(String nameLoginStaff) { this.nameLoginStaff = nameLoginStaff; }
-
-    public String getPasswordStaff() { return passwordStaff; }
-    public void setPasswordStaff(String passwordStaff) { this.passwordStaff = passwordStaff; }
-
-    public String getManagedByAdminId() { return managedByAdminId; }
-    public void setManagedByAdminId(String managedByAdminId) { this.managedByAdminId = managedByAdminId; }
+    private String adminId;
 }
