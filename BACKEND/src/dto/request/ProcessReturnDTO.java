@@ -1,32 +1,22 @@
-package dto.request;
+package com.library.dto.request;
 
-import java.time.LocalDate;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProcessReturnDTO {
+
+    @NotBlank(message = "Borrow detail ID is required")
     private String borrowDetailId;
-    private String transactionId;
-    private String bookId;
+
+    @NotBlank(message = "Book status is required")
     private String bookStatus;
-    private String describe;
-    private LocalDate actualReturnDate;
 
-    public ProcessReturnDTO() {}
-
-    public String getBorrowDetailId() { return borrowDetailId; }
-    public void setBorrowDetailId(String borrowDetailId) { this.borrowDetailId = borrowDetailId; }
-
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
-
-    public String getBookId() { return bookId; }
-    public void setBookId(String bookId) { this.bookId = bookId; }
-
-    public String getBookStatus() { return bookStatus; }
-    public void setBookStatus(String bookStatus) { this.bookStatus = bookStatus; }
-
-    public String getDescribe() { return describe; }
-    public void setDescribe(String describe) { this.describe = describe; }
-
-    public LocalDate getActualReturnDate() { return actualReturnDate; }
-    public void setActualReturnDate(LocalDate actualReturnDate) { this.actualReturnDate = actualReturnDate; }
+    private String description;
 }
