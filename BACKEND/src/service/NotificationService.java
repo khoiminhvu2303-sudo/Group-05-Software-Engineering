@@ -1,12 +1,15 @@
-package service;
+package com.library.service.impl;
 
-public class NotificationService {
+import com.library.service.NotificationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-    public void sendBorrowReminderEmail(String readerId) {
-        // TODO: Send return deadline reminder email to reader
-    }
+@Service
+@RequiredArgsConstructor
+public class NotificationServiceImpl implements NotificationService {
 
-    public void sendOverdueSMS(String readerId) {
-        // TODO: Send overdue notification via SMS
+    @Override
+    public void sendNotification(String recipientEmail, String subject, String content) {
+        // Notification logic (e.g., Spring JavaMailSender integration) goes here
     }
 }
