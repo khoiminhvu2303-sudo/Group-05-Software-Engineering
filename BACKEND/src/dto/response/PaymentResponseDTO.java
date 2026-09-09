@@ -1,18 +1,24 @@
-package dto.response;
+package com.library.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentResponseDTO {
-    private String paymentStatus;
-    private String transactionNo;
-    private String message;
 
-    public PaymentResponseDTO() {}
-
-    public String getPaymentStatus() { return paymentStatus; }
-    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
-
-    public String getTransactionNo() { return transactionNo; }
-    public void setTransactionNo(String transactionNo) { this.transactionNo = transactionNo; }
-
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    private String paymentId;
+    private String fineId;
+    private BigDecimal amount;
+    private String paymentMethod;
+    private String paymentUrl; // Redirect URL to payment gateway (VNPay/MoMo)
+    private String status;     // PENDING, SUCCESS, FAILED
+    private LocalDateTime createdAt;
 }
