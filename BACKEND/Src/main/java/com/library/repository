@@ -1,2 +1,270 @@
-# AdminRepository #
+# AdminRepository 
+package com.library.repository;
+
+import com.library.entity.Admin;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface AdminRepository extends JpaRepository<Admin, String> {
+    Optional<Admin> findByNameLoginAdmin(String nameLoginAdmin);
+    Optional<Admin> findByEmail(String email);
+    boolean existsByNameLoginAdmin(String nameLoginAdmin);
+}
+# AuditLog
+package com.library.repository;
+
+import com.library.entity.Auditlog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public interface AuditLogRepository extends JpaRepository<Auditlog, String> {
+    List<Auditlog> findByUserIDOrderByCreatedAtDesc(String userID);
+    List<Auditlog> findByAction(String action);
+    List<Auditlog> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    List<Auditlog> findByUserIDAndActionOrderByCreatedAtDesc(String userID, String action);
+}
+# Author
+package com.library.repository;
+
+import com.library.entity.Author;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface AuthorRepository extends JpaRepository<Author, String> {
+    Optional<Author> findByAuthorName(String authorName);
+    boolean existsByAuthorName(String authorName);
+}
+# BookCopy
+package com.library.repository;
+
+import com.library.entity.BookCopy;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface BookCopyRepository extends JpaRepository<BookCopy, String> {
+
+    Optional<BookCopy> findByBarcode(String barcode);
+    boolean existsByBarcode(String barcode);
+    List<BookCopy> findByStatus(String status);
+
+    List<BookCopy> findByBook_BookID(String bookID);
+    List<BookCopy> findByBook_BookIDAndStatus(String bookID, String status);
+
+    Long countByBook_BookIDAndStatusIn(String bookID, List<String> statuses);
+
+    @Query("SELECT bc FROM BookCopy bc WHERE bc.book.bookID = :bookID AND bc.status = 'Available'")
+    List<BookCopy> findAvailableCopiesByBookId(@Param("bookID") String bookID);
+
+    @Query("SELECT COUNT(bc) FROM BookCopy bc WHERE bc.book.bookID = :bookID AND bc.status = 'Available'")
+    Long countAvailableCopiesByBookId(@Param("bookID") String bookID);
+}
+# Book
+package com.library.repository;
+
+import com.library.entity.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, String> {
+
+    List<Book> findByTitleContainingIgnoreCase(String title);
+    List<Book> findByStatus(String status);
+    boolean existsByTitle(String title);
+
+    @Query("SELECT b FROM Book b WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(b.author.authorName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(b.category.categoryName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Book> searchBooks(@Param("keyword") String keyword);
+
+    @Query("SELECT b FROM Book b JOIN b.category c WHERE c.categoryName = :categoryName")
+    List<Book> findByCategoryName(@Param("categoryName") String categoryName);
+
+    @Query("SELECT b FROM Book b JOIN b.author a WHERE a.authorName = :authorName")
+    List<Book> findByAuthorName(@Param("authorName") String authorName);
+}
+# BorrowRecord
+package com.library.repository;
+
+import com.library.entity.BorrowRecord;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface BorrowRecordRepository extends JpaRepository<BorrowRecord, String> {
+
+    List<BorrowRecord> findByReader_ReaderID(String readerID);
+    List<BorrowRecord> findByReader_ReaderIDAndStatus(String readerID, String status);
+
+    Optional<BorrowRecord> findByReader_ReaderIDAndBookCopy_CopyIDAndActualReturnDateIsNull(String readerID, String copyID);
+
+    @Query("SELECT br FROM BorrowRecord br WHERE br.reader.readerID = :readerID AND br.actualReturnDate IS NULL")
+    List<BorrowRecord> findActiveBorrowsByReader(@Param("readerID") String readerID);
+
+    @Query("SELECT br FROM BorrowRecord br WHERE br.dueDate < :currentDate AND br.actualReturnDate IS NULL")
+    List<BorrowRecord> findOverdueBorrows(@Param("currentDate") LocalDate currentDate);
+
+    @Query("SELECT COUNT(br) FROM BorrowRecord br WHERE br.reader.readerID = :readerID AND br.actualReturnDate IS NULL")
+    Long countActiveBorrowsByReader(@Param("readerID") String readerID);
+}
+# Category
+package com.library.repository;
+
+import com.library.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface CategoryRepository extends JpaRepository<Category, String> {
+    Optional<Category> findByCategoryName(String categoryName);
+    boolean existsByCategoryName(String categoryName);
+}
+# FineReceipt
+package com.library.repository;
+
+import com.library.entity.FineReceipt;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface FineReceiptRepository extends JpaRepository<FineReceipt, String> {
+    List<FineReceipt> findByPaymentStatus(String paymentStatus);
+    List<FineReceipt> findByBorrowRecord_TransactionID(String transactionID);
+}
+# Publisher
+package com.library.repository;
+
+import com.library.entity.Publisher;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface PublisherRepository extends JpaRepository<Publisher, String> {
+    Optional<Publisher> findByName(String name);
+    boolean existsByName(String name);
+}
+# Reader
+package com.library.repository;
+
+import com.library.entity.Reader;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface ReaderRepository extends JpaRepository<Reader, String> {
+
+    Optional<Reader> findByUsername(String username);
+    Optional<Reader> findByEmail(String email);
+    Optional<Reader> findByPhone(String phone);
+    Optional<Reader> findByCccd(String cccd);
+
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
+    boolean existsByCccd(String cccd);
+
+    List<Reader> findByStatus(String status);
+
+    @Query("SELECT r FROM Reader r WHERE r.expiryDate < :date AND r.status = 'Active'")
+    List<Reader> findExpiredReaders(@Param("date") LocalDate date);
+
+    @Query("SELECT r FROM Reader r WHERE r.expiryDate BETWEEN :startDate AND :endDate")
+    List<Reader> findReadersExpiringBetween(@Param("startDate") LocalDate startDate, 
+                                            @Param("endDate") LocalDate endDate);
+}
+# Reservation
+package com.library.repository;
+
+import com.library.entity.Reservation;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public interface ReservationRepository extends JpaRepository<Reservation, String> {
+
+    List<Reservation> findByReader_ReaderIDAndStatus(String readerID, String status);
+    List<Reservation> findByBookCopy_CopyIDAndStatus(String copyID, String status);
+
+    boolean existsByReader_ReaderIDAndBookCopy_CopyIDAndStatus(String readerID, String copyID, String status);
+
+    @Query("SELECT r FROM Reservation r WHERE r.expiryDate < :currentDate AND r.status = 'Active'")
+    List<Reservation> findExpiredReservations(@Param("currentDate") LocalDateTime currentDate);
+
+    @Query("SELECT r FROM Reservation r WHERE r.reader.readerID = :readerID AND r.status = 'Active'")
+    List<Reservation> findActiveReservationsByReader(@Param("readerID") String readerID);
+}
+# Staff
+package com.library.repository;
+
+import com.library.entity.Staff;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface StaffRepository extends JpaRepository<Staff, String> {
+    Optional<Staff> findByNameLoginStaff(String nameLoginStaff);
+    Optional<Staff> findByEmail(String email);
+    boolean existsByNameLoginStaff(String nameLoginStaff);
+    List<Staff> findByStatus(String status);
+}
+# WishList 
+package com.library.repository;
+
+import com.library.entity.WishList;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface WishListRepository extends JpaRepository<WishList, String> {
+    List<WishList> findByReader_ReaderID(String readerID);
+}
+
 
