@@ -1,17 +1,50 @@
-package service;
+package com.library.service.impl;
 
-import dto.response.BookResponseDTO;
+import com.library.dto.response.BookResponseDTO;
+import com.library.entity.Book;
+import com.library.exception.ResourceNotFoundException;
+import com.library.repository.BookRepository;
+import com.library.service.BookService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class BookService {
+@Service
+@RequiredArgsConstructor
+public class BookServiceImpl implements BookService {
 
+    private final BookRepository bookRepository;
+
+    @Override
+    @Transactional(readOnly = true)
     public BookResponseDTO getBookById(String bookId) {
-        // TODO: Fetch book info combined with Author, Publisher, and Category
-        return new BookResponseDTO();
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + bookId));
+        return mapToResponse(book);
     }
 
-    public List<BookResponseDTO> searchBooks(String title, String categoryId) {
-        // TODO: Search books by title and categoryId
-        return List.of();
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookResponseDTO> getAllBooks() {
+        return bookRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private BookResponseDTO mapToResponse(Book book) {
+        return BookResponseDTO.builder()
+                .bookId(book.getBookID())
+                .title(book.getTitle())
+                .describe(book.getDescribe())
+                .publication(book.getPublication())
+                .stockQuantity(book.getStockquantity())
+                .status(book.getStatus())
+                .authorName(book.getAuthor() != null ? book.getAuthor().getAuthorName() : null)
+                .publisherName(book.getPublisher() != null ? book.getPublisher().getName() : null)
+                .categoryName(book.getCategory() != null ? book.getCategory().getCategoryName() : null)
+                .build();
     }
 }
