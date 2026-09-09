@@ -1,26 +1,28 @@
-package dto.response;
+package com.library.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StaffResponseDTO {
+
     private String staffId;
     private String staffName;
+    private String gender;
+    private LocalDate birthday;
+    private String phone;
     private String email;
-    private String numberphone;
+    private String address;
+    private String cccd;
+    private Double salary;
+    private String nameLogin;
     private String status;
-
-    public StaffResponseDTO() {}
-
-    public String getStaffId() { return staffId; }
-    public void setStaffId(String staffId) { this.staffId = staffId; }
-
-    public String getStaffName() { return staffName; }
-    public void setStaffName(String staffName) { this.staffName = staffName; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getNumberphone() { return numberphone; }
-    public void setNumberphone(String numberphone) { this.numberphone = numberphone; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    private String managedByAdminId;
 }
