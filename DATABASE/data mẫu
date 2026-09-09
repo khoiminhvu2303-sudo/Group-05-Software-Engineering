@@ -15,6 +15,13 @@ INSERT INTO Author (AuthorID, AuthorName, Note, Birthday, Deathday) VALUES
 ('AUT003', 'Yuval Noah Harari', 'Tác giả cuốn Sapiens: Lược Sử Loài Người', '1976-02-24', NULL),
 ('AUT004', 'James Clear', 'Tác giả cuốn Atomic Habits', '1986-01-22', NULL);
 
+-- Thêm dữ liệu Reader mẫu
+INSERT INTO Reader (ReaderID, Fullname, DOB, Phone, Gender, Email, Address, CCCD, StartDate, ExpiryDate, Username, Password, Status) VALUES
+('RD00000001', N'Phạm Minh Tuấn', '2001-05-15', '0987654321', N'Nam', 'tuan.pm@gmail.com', N'Q.1, TP.HCM', '079201012345', '2024-01-01', '2027-01-01', 'tuanpm', '123456', 'Active'),
+('RD00000002', N'Lê Thị Thu Hà', '1999-12-10', '0976543210', N'Nữ', 'ha.le@gmail.com', N'Q.3, TP.HCM', '079301054321', '2024-01-01', '2027-01-01', 'hale', '123456', 'Active'),
+('DG001', N'Nguyễn Văn An', '2002-03-22', '0965432109', N'Nam', 'an.nguyen@gmail.com', N'Q. Bình Thạnh, TP.HCM', '079202098765', '2024-01-10', '2027-01-10', 'annguyen', '123456', 'Active'),
+('DG002', N'Trần Thị Bích', '2000-09-08', '0954321098', N'Nữ', 'bich.tran@gmail.com', N'Q. Tân Bình, TP.HCM', '079300067890', '2024-01-10', '2027-01-10', 'bichtran', '123456', 'Active');
+
 INSERT INTO FineReceipt (FineID, transactionID, Note, amount, paymentStatus) VALUES
 ('FR00000001', 'TR00000001', 'Phạt trễ hạn trả sách 3 ngày', 15000.00, 'Paid'),
 ('FR00000002', 'TR00000003', 'Phạt làm hỏng trang sách 12-15', 50000.00, 'Unpaid'),
@@ -40,6 +47,18 @@ VALUES
 ('CP00000002', 'B000000001', 'BC-MB-002', 'Borrowed', N'Cũ nhẹ', 110000.00, '2024-01-15 08:30:00', '2024-02-10 14:20:00'),
 ('CP00000003', 'B000000002', 'BC-TV-001', 'Reserved', N'Mới', 85000.00, '2024-02-01 09:00:00', '2024-02-05 10:15:00'),
 ('CP00000004', 'B000000003', 'BC-HP-001', 'Available', N'Mới', 250000.00, '2024-02-15 11:45:00', '2024-02-15 11:45:00');
+
+-- Thêm dữ liệu Category mẫu
+INSERT INTO Category (CategoryID, categoryName, BookID) VALUES
+('CAT0000001', N'Kỹ năng sống', 'B000000001'),
+('CAT0000002', N'Văn học', 'B000000002'),
+('CAT0000003', N'Lịch sử - Sách khoa học', 'B000000003');
+
+-- Thêm dữ liệu Publisher mẫu
+INSERT INTO Publisher (PublisherID, Name, Address, Phone, Email, Website) VALUES
+('PUB0000001', N'NXB Trẻ', N'161 Lý Chính Thắng, P. Võ Thị Sáu, Q.3, TP.HCM', '02839316289', 'nxbtre@nxbtre.com.vn', 'https://www.nxbtre.com.vn'),
+('PUB0000002', N'NXB Nhã Nam', N'59 Đỗ Quang, Trung Hoà, Cầu Giấy, Hà Nội', '02435146869', 'bookstore@nhanam.vn', 'https://nhanam.vn'),
+('PUB0000003', N'NXB Kim Đồng', N'55 Quang Trung, Nguyễn Du, Hai Bà Trưng, Hà Nội', '02439434730', 'info@nxbkimdong.com.vn', 'https://nxbkimdong.com.vn');
 
 -- Thêm dữ liệu mẫu vào bảng Reservation
 INSERT INTO Reservation (ReservationID, ReaderID, CopyID, ReservationDate, ExpiryDate, Status, QRCode, Note) 
