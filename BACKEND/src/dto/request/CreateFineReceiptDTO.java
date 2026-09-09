@@ -1,24 +1,25 @@
-package dto.request;
+package com.library.dto.request;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateFineReceiptDTO {
+
     private String transactionId;
-    private String readerId;
+
     private String describe;
+
+    @NotNull(message = "Amount is required")
+    @Positive(message = "Amount must be greater than zero")
     private BigDecimal amount;
-
-    public CreateFineReceiptDTO() {}
-
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
-
-    public String getReaderId() { return readerId; }
-    public void setReaderId(String readerId) { this.readerId = readerId; }
-
-    public String getDescribe() { return describe; }
-    public void setDescribe(String describe) { this.describe = describe; }
-
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
 }
