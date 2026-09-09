@@ -1,16 +1,22 @@
-package service;
+package com.library.service.impl;
+
+import com.library.repository.BorrowRecordRepository;
+import com.library.service.ReportService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-public class ReportService {
+@Service
+@RequiredArgsConstructor
+public class ReportServiceImpl implements ReportService {
 
-    public byte[] exportBorrowStatistics(LocalDate startDate, LocalDate endDate) {
-        // TODO: Export borrowing statistics report
-        return new byte[0];
-    }
+    private final BorrowRecordRepository borrowRecordRepository;
 
-    public byte[] exportFineRevenue(LocalDate startDate, LocalDate endDate) {
-        // TODO: Export fine revenue report
-        return new byte[0];
+    @Override
+    @Transactional(readOnly = true)
+    public long getTotalBorrowsCount(LocalDate startDate, LocalDate endDate) {
+        return borrowRecordRepository.countByDateBorrowBetween(startDate, endDate);
     }
 }
