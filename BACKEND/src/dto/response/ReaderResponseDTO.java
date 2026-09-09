@@ -1,32 +1,28 @@
-package dto.response;
+package com.library.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReaderResponseDTO {
+
     private String readerId;
     private String fullName;
-    private String email;
+    private LocalDate dob;
     private String phone;
-    private String status;
+    private String gender;
+    private String email;
+    private String address;
+    private String cccd;
+    private LocalDate startDate;
     private LocalDate expiryDate;
-
-    public ReaderResponseDTO() {}
-
-    public String getReaderId() { return readerId; }
-    public void setReaderId(String readerId) { this.readerId = readerId; }
-
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public LocalDate getExpiryDate() { return expiryDate; }
-    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
+    private String username;
+    private String status;
 }
