@@ -1,18 +1,22 @@
-package dto.request;
+package com.library.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateReservationDTO {
+
+    @NotBlank(message = "Reader ID is required")
     private String readerId;
+
+    @NotBlank(message = "Copy ID is required")
     private String copyId;
+
     private String note;
-
-    public CreateReservationDTO() {}
-
-    public String getReaderId() { return readerId; }
-    public void setReaderId(String readerId) { this.readerId = readerId; }
-
-    public String getCopyId() { return copyId; }
-    public void setCopyId(String copyId) { this.copyId = copyId; }
-
-    public String getNote() { return note; }
-    public void setNote(String note) { this.note = note; }
 }
