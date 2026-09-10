@@ -1,1 +1,218 @@
+Create Database LIBRARY MANAGEMENT SYSTEM;
+Use LIBRARY MANAGEMENT SYSTEM;
 
+Drop table if exists Reader;
+Drop table if exists Staff;
+Drop table if exists Admin;
+Drop table if exists Author;
+Drop table if exists Book;
+Drop table if exists BookCopy;
+Drop table if exists Category;
+Drop table if exists Wishlist;
+Drop table if exists Publisher;
+Drop table if exists Reservation;
+Drop table if exists BorrowRecord;
+Drop table if exists BorrowDetail;
+Drop table if exists FineReceipt;
+Drop table if exists DetailFine;
+Drop table if exists Auditlog;
+
+Create table Reader ( 
+    ReaderID Char(10) Primary Key NOT NULL,
+    FullName varchar(50) NOT NULL,
+    DOB date NULL,
+    Phone Char(10) NULL,
+    Gender Char(10) NOT NULL,
+    Email varchar(50) NULL,
+    Address varchar(50) NULL,
+    CCCD char(12) NULL,
+    StartDate date NOT NULL,
+    ExpiryDate date NOT NULL,
+    Username varchar(50) NOT NULL,
+    Password varchar(50) NOT NULL,
+    Status Varchar(50) NOT NULL DEFAULT 'Active',
+
+    CONSTRAINT UQ_Reader_Phone UNIQUE (Phone),
+    CONSTRAINT UQ_Reader_Email UNIQUE (Email),
+    CONSTRAINT UQ_Reader_CCCD UNIQUE (CCCD),
+    CONSTRAINT UQ_Reader_Username UNIQUE (Username),
+    CONSTRAINT CHK_Reader_Status CHECK (Status IN ('Active', 'Locked', 'Suspended')),
+    CONSTRAINT CHK_Reader_Dates CHECK (ExpiryDate > StartDate)
+);
+
+CREATE TABLE Staff (
+    StaffID CHAR(10) PRIMARY KEY,
+    StaffName VARCHAR(50) NOT NULL,
+    Gender VARCHAR(10),
+    Birthday_Staff DATE,
+    Numberphone CHAR(10),
+    Email VARCHAR(50) UNIQUE,
+    Address VARCHAR(50),
+    CCCD CHAR(12) UNIQUE,
+    Salary DOUBLE,
+    NameLogin_Staff VARCHAR(50) NOT NULL UNIQUE,
+    Password_Staff VARCHAR(50) NOT NULL,
+    Status VARCHAR(50),
+    ManagedByAdminID CHAR(10),
+    
+    CONSTRAINT FK_Staff_Admin FOREIGN KEY (ManagedByAdminID) REFERENCES Admin(AdminID)
+        ON DELETE SET NULL 
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Admin (
+    AdminID CHAR(10) PRIMARY KEY,
+    AdminName VARCHAR(50) NOT NULL,
+    Gender VARCHAR(10),
+    Email VARCHAR(50) UNIQUE,
+    Phone CHAR(10),
+    CCCD CHAR(12) UNIQUE,
+    Salary DECIMAL(12,2),
+    NameLogin_Admin VARCHAR(50) NOT NULL UNIQUE,
+    Password_Admin VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Author (
+    AuthorID CHAR(10) PRIMARY KEY,
+    AuthorName VARCHAR(50) NOT NULL,
+    Note TEXT,
+    Birthday DATE,
+    Deathday DATE
+);
+
+CREATE TABLE Book (
+    BookID CHAR(10) PRIMARY KEY,
+    Title VARCHAR(50) NOT NULL,
+    `Describe` TEXT,
+    Publication DATE,
+    Stockquantity INT,
+    Status VARCHAR(50) DEFAULT 'Available',
+    AuthorID CHAR(10) NOT NULL,
+    PublisherID CHAR(10) NOT NULL,
+    CategoryID CHAR(10) NOT NULL,
+    CONSTRAINT FK_Book_Author FOREIGN KEY (AuthorID) REFERENCES Author(AuthorID),
+    CONSTRAINT FK_Book_Publisher FOREIGN KEY (PublisherID) REFERENCES Publisher(PublisherID),
+    CONSTRAINT FK_Book_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
+);
+
+CREATE TABLE BookCopy (
+    CopyID CHAR(10) PRIMARY KEY,
+    BookID CHAR(10) NOT NULL,
+    Barcode VARCHAR(50) NOT NULL UNIQUE,
+    Status VARCHAR(50) DEFAULT 'Available' 
+        CHECK (Status IN ('Available', 'Borrowed', 'Reserved', 'Lost', 'Damaged')),
+    `Condition` VARCHAR(50),
+    Price DECIMAL(12,2),
+    CreatedAt DATETIME DEFAULT NOW(),
+    UpdatedAt DATETIME DEFAULT NOW(),
+    CONSTRAINT FK_BookCopy_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
+);
+
+Create table Category (
+    CategoryID Char(10) Primary Key NOT NULL,
+    CategoryName Varchar(50) NOT NULL,
+    BookID Char(10),
+
+    CONSTRAINT FK_Book_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
+);
+
+CREATE TABLE Reservation (
+    ReservationID CHAR(10) PRIMARY KEY,
+    ReaderID CHAR(10) NOT NULL,
+    CopyID CHAR(10) NOT NULL,
+    ReservationDate DATETIME DEFAULT NOW(),
+    ExpiryDate DATETIME NOT NULL,
+    Status VARCHAR(50),
+    QRCode VARCHAR(255),
+    Note TEXT,
+    CONSTRAINT FK_Reservation_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
+    CONSTRAINT FK_Reservation_Copy FOREIGN KEY (CopyID) REFERENCES BookCopy(CopyID)
+);
+
+CREATE TABLE BorrowRecord (
+    BorrowID   INT AUTO_INCREMENT PRIMARY KEY,
+    ReaderID   INT NOT NULL,
+    StaffID    INT NOT NULL,                     -- nhân viên xử lý mượn
+    BorrowDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Status      DEFAULT 'Active'
+              CHECK (Status IN('Active', 'Completed'),  -- Active nếu còn sách chưa trả
+   CONSTRAINT FK_BorrowRecord_Reader FOREIGN KEY (readerID) REFERENCES Reader(readerID),
+   CONSTRAINT FK_BorrowRecord_StaffID FOREIGN KEY (staffID)  REFERENCES Staff(staffID)
+);
+
+CREATE TABLE BorrowDetail (
+    BorrowDetailID   INT AUTO_INCREMENT PRIMARY KEY,
+    BorrowID         INT NOT NULL,
+    CopyID           INT NOT NULL,
+    DueDate          DATE NOT NULL,              -- sẽ được trigger tự động tính
+    ActualReturnDate DATE NULL,                  -- null nếu chưa trả
+    RenewalCount     INT DEFAULT 0,
+    ReturnCondition  ENUM('Good', 'Damaged', 'Lost') NULL, -- ghi nhận khi trả
+    Status           DEFAULT 'On loan'
+                  CHECK (Status IN('On loan', 'Returned', 'Overdue'),
+   CONSTRAINT FK_BorrowDetail_BorrowRecord FOREIGN KEY (borrowID) REFERENCES BorrowRecord(borrowID) ON DELETE CASCADE,
+   CONSTRAINT FK_BorrowDetail_Bookcopy FOREIGN KEY (copyID)   REFERENCES BookCopy(copyID),
+   CONSTRAINT chk_borrow_detail_status CHECK (
+        (status = 'On loan' AND actualReturnDate IS NULL) OR
+        (status IN ('Returned', 'Overdue') AND actualReturnDate IS NOT NULL)
+    )
+);
+
+CREATE TABLE FineReceipt (
+    FineID CHAR(10) PRIMARY KEY,
+    TransactionID CHAR(10) NOT NULL,
+    Note VARCHAR(255),
+    Amount DECIMAL(12,2) NOT NULL,
+    PaymentStatus VARCHAR(50) DEFAULT 'Unpaid',
+
+    CONSTRAINT FK_FineReceipt_BorrowRecord FOREIGN KEY (transactionID) REFERENCES BorrowRecord(transactionID)
+);
+
+CREATE TABLE DetailFineReceipt (
+    FineID         INT AUTO_INCREMENT PRIMARY KEY,
+    BorrowDetailID INT NOT NULL UNIQUE,          -- mỗi chi tiết mượn chỉ có 1 phiếu phạt
+    StaffID        INT NULL,                     -- nhân viên thu phạt (null nếu chưa thu)
+    Reason         VARCHAR(255) NOT NULL,        -- mô tả vi phạm
+    Amount         DECIMAL(10,2) NOT NULL,
+    IssuedDate     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PaidDate       DATETIME NULL,
+    Status          DEFAULT 'Pending'
+            CHECK (Status IN('Pending', 'Paid', 'Void') ,
+  CONSTRAINT FK_DetailFineReceipt_DetailBorrowRecord  FOREIGN KEY (borrowDetailID) REFERENCES BorrowDetail(borrowDetailID),
+  CONSTRAINT FK_DetailFineReceipt_Staff FOREIGN KEY (staffID) REFERENCES Staff(staffID)
+);
+
+CREATE TABLE WishList (
+    WishListID CHAR(10) PRIMARY KEY,
+    ReaderID CHAR(10) NOT NULL,
+    BookID CHAR(10) NOT NULL,
+    AddedData DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Note TEXT,
+    CONSTRAINT FK_WishList_Reader FOREIGN KEY (ReaderID) REFERENCES Reader(ReaderID),
+    CONSTRAINT FK_WishList_Book FOREIGN KEY (BookID) REFERENCES Book(BookID)
+);
+
+Create table Publisher ( 
+    PublisherID Char(10) Primary Key NOT NULL,
+    Name Varchar(50) NOT NULL,
+    Address Varchar(50) NULL,
+    Phone Char(10) NULL,
+    Email Varchar(50) NULL,
+    Website Varchar(50) NULL,
+
+    CONSTRAINT UQ_Publisher_Name UNIQUE (Name),
+    CONSTRAINT UQ_Publisher_Address UNIQUE (Address),
+    CONSTRAINT UQ_Publisher_Phone UNIQUE (Phone),
+    CONSTRAINT UQ_Publisher_Email UNIQUE (Email),
+    CONSTRAINT UQ_Publisher_Website UNIQUE (Website)
+);
+
+CREATE TABLE Auditlog (
+    LogID CHAR(10) PRIMARY KEY,
+    UserID CHAR(10) NOT NULL,
+    UserRole VARCHAR(20) NOT NULL,
+    Action VARCHAR(50) NOT NULL,
+    TableName VARCHAR(50),
+    Description TEXT,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
