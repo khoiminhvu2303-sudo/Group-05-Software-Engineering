@@ -235,15 +235,15 @@ library-management-backend/
 
 │   │   ├── JwtAuthenticationFilter.java # Filter
 
-│   │   ├── JwtAuthenticationEntryPoint
+│   │   ├── JwtAuthenticationEntryPoint.java
 
-│   │   ├── CustomAccessDeniedHandler
+│   │   ├── CustomAccessDeniedHandler.java
 
 │   │   ├── CustomUserDetailsService.java# User load
 
-│   │   ├── UserPrincipal
+│   │   ├── UserPrincipal.java
 
-│   │   └── UserRole
+│   │   └── UserRole.java
 
 
 │   │
@@ -346,11 +346,11 @@ library-management-backend/
 
 │   │   ├── PerformanceInterceptor.java  # Đo thời gian response
 
-│   │   ├── RequestLoggingInterceptor
+│   │   ├── RequestLoggingInterceptor.java
 
-│   │   ├── CorrelationIdInterceptor
+│   │   ├── CorrelationIdInterceptor.java
 
-│   │   └── RateLimitInterceptor
+│   │   └── RateLimitInterceptor.java
 
 │   │
 
@@ -364,13 +364,13 @@ library-management-backend/
 
 │   │   ├── SecurityConstants.java
 
-│   │   ├── StatusConstants
+│   │   ├── StatusConstants.java
 
-│   │   ├── BusinessRuleConstants
+│   │   ├── BusinessRuleConstants.java
 
-│   │   ├── AuditActionConstants
+│   │   ├── AuditActionConstants.java
 
-│   │   ├── RegexConstants
+│   │   ├── RegexConstants.java
 
 │   │   ├── BookConstants.java
 
@@ -384,9 +384,9 @@ library-management-backend/
 
 │   │   ├── PaginationConstants.java
 
-│   │   ├── RoleConstants
+│   │   ├── RoleConstants.java
 
-│   │   └── ApiPathConstants
+│   │   └── ApiPathConstants.java
 
 │   │
 
