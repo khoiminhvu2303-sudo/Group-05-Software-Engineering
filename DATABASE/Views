@@ -1,1 +1,64 @@
+-- 7.1. View chi tiết phiếu mượn (kết hợp đầy đủ thông tin)
+CREATE VIEW v_BorrowDetails AS
+SELECT 
+    br.borrowID,
+    r.fullName AS readerName,
+    r.email AS readerEmail,
+    s.fullName AS staffName,
+    br.borrowDate,
+    bd.borrowDetailID,
+    bk.title,
+    bc.barcode,
+    bc.shelfLocation,
+    bd.dueDate,
+    bd.actualReturnDate,
+    bd.status AS loanStatus,
+    bd.renewalCount,
+    bd.returnCondition,
+    fr.fineID,
+    fr.amount AS fineAmount,
+    fr.status AS fineStatus
+FROM BorrowRecord br
+JOIN Reader r ON br.readerID = r.readerID
+JOIN Staff s ON br.staffID = s.staffID
+JOIN BorrowDetail bd ON br.borrowID = bd.borrowID
+JOIN BookCopy bc ON bd.copyID = bc.copyID
+JOIN Book bk ON bc.bookID = bk.bookID
+LEFT JOIN FineReceipt fr ON bd.borrowDetailID = fr.borrowDetailID;
 
+-- 7.2. View phiếu phạt chưa thanh toán
+CREATE VIEW v_UnpaidFines AS
+SELECT 
+    fr.fineID,
+    r.fullName AS readerName,
+    r.email AS readerEmail,
+    bk.title,
+    bc.barcode,
+    fr.reason,
+    fr.amount,
+    fr.issuedDate
+FROM FineReceipt fr
+JOIN BorrowDetail bd ON fr.borrowDetailID = bd.borrowDetailID
+JOIN BorrowRecord br ON bd.borrowID = br.borrowID
+JOIN Reader r ON br.readerID = r.readerID
+JOIN BookCopy bc ON bd.copyID = bc.copyID
+JOIN Book bk ON bc.bookID = bk.bookID
+WHERE fr.status = 'Pending';
+
+-- 7.3. View sách đang mượn nhưng quá hạn (chưa trả)
+CREATE VIEW v_OverdueLoans AS
+SELECT 
+    bd.borrowDetailID,
+    r.fullName AS readerName,
+    r.email AS readerEmail,
+    bk.title,
+    bc.barcode,
+    bd.dueDate,
+    DATEDIFF(CURDATE(), bd.dueDate) AS overdueDays
+FROM BorrowDetail bd
+JOIN BorrowRecord br ON bd.borrowID = br.borrowID
+JOIN Reader r ON br.readerID = r.readerID
+JOIN BookCopy bc ON bd.copyID = bc.copyID
+JOIN Book bk ON bc.bookID = bk.bookID
+WHERE bd.actualReturnDate IS NULL
+  AND bd.dueDate < CURDATE();
