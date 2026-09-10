@@ -1,0 +1,18 @@
+SELECT 
+    br.borrowID,
+    br.borrowDate,
+    b.title,
+    bc.barcode,
+    bd.dueDate,
+    bd.actualReturnDate,
+    bd.status AS loanStatus,
+    bd.renewalCount,
+    fr.amount AS fineAmount,
+    fr.status AS fineStatus
+FROM BorrowRecord br
+JOIN BorrowDetail bd ON br.borrowID = bd.borrowID
+JOIN BookCopy bc ON bd.copyID = bc.copyID
+JOIN Book b ON bc.bookID = b.bookID
+LEFT JOIN FineReceipt fr ON bd.borrowDetailID = fr.borrowDetailID
+WHERE br.readerID = ?
+ORDER BY br.borrowDate DESC;
