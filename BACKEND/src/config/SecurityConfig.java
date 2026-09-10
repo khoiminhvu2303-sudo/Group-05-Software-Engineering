@@ -1,5 +1,8 @@
 package com.library.config;
 
+import com.library.constant.ApiPathConstants;
+import com.library.constant.RoleConstants;
+import com.library.constant.SecurityConstants;
 import com.library.security.CustomAccessDeniedHandler;
 import com.library.security.JwtAuthenticationEntryPoint;
 import com.library.security.JwtAuthenticationFilter;
@@ -7,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,51 +46,88 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10);
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
+        return cfg.getAuthenticationManager();
     }
 
-    // Cấu hình CORS cho phép Front-End gọi API không bị chặn
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        CorsConfiguration cfg = new CorsConfiguration();
+        cfg.setAllowedOriginPatterns(List.of("*"));
+        cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        cfg.setAllowedHeaders(List.of("*"));
+        cfg.setExposedHeaders(List.of(SecurityConstants.CORRELATION_ID_HEADER));
+        cfg.setAllowCredentials(true);
+        cfg.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
+        src.registerCorsConfiguration("/api/**", cfg);
+        return src;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors(Customizer.withDefaults())
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(customAccessDeniedHandler)
+                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                    .accessDeniedHandler(customAccessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                // Endpoints công khai (Guest)
-                .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
 
-                // Endpoints Độc giả (Reader)
-                .requestMatchers("/api/readers/**", "/api/reservations/**", "/api/wishlist/**").hasAnyRole("READER", "STAFF", "ADMIN")
+                // ===== CORS preflight — luôn permit =====
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // Endpoints Quầy Thủ thư (Staff)
-                .requestMatchers("/api/borrows/**", "/api/fines/**", "/api/circulation/**").hasAnyRole("STAFF", "ADMIN")
+                // ===== PUBLIC =====
+                .requestMatchers(SecurityConstants.PUBLIC_ENDPOINTS).permitAll()
+                .requestMatchers(HttpMethod.POST, ApiPathConstants.READERS + "/register").permitAll()
 
-                // Endpoints Quản trị (Admin)
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // ===== BOOKS =====
+                .requestMatchers(HttpMethod.GET, ApiPathConstants.BOOKS).permitAll()
+                .requestMatchers(HttpMethod.GET, ApiPathConstants.BOOKS + "/*").permitAll()
+                .requestMatchers(ApiPathConstants.BOOKS + "/**")
+                    .hasAnyRole(RoleConstants.STAFF, RoleConstants.ADMIN)
+
+                // ===== CATALOG (Author / Publisher / Category) =====
+                .requestMatchers(HttpMethod.GET,
+                        ApiPathConstants.AUTHORS + "/**",
+                        ApiPathConstants.PUBLISHERS + "/**",
+                        ApiPathConstants.CATEGORIES + "/**").permitAll()
+                .requestMatchers(ApiPathConstants.AUTHORS + "/**",
+                        ApiPathConstants.PUBLISHERS + "/**",
+                        ApiPathConstants.CATEGORIES + "/**")
+                    .hasAnyRole(RoleConstants.STAFF, RoleConstants.ADMIN)
+
+                // ===== READER + STAFF + ADMIN =====
+                .requestMatchers(ApiPathConstants.READERS + "/**",
+                        ApiPathConstants.RESERVATIONS + "/**",
+                        ApiPathConstants.WISHLIST + "/**")
+                    .hasAnyRole(RoleConstants.READER, RoleConstants.STAFF, RoleConstants.ADMIN)
+
+                // ===== STAFF + ADMIN =====
+                .requestMatchers(ApiPathConstants.BORROWS + "/**",
+                        ApiPathConstants.FINES + "/**",
+                        ApiPathConstants.CIRCULATION + "/**",
+                        ApiPathConstants.REPORTS + "/**",
+                        ApiPathConstants.STATISTICS + "/**")
+                    .hasAnyRole(RoleConstants.STAFF, RoleConstants.ADMIN)
+
+                // ===== ADMIN =====
+                .requestMatchers(ApiPathConstants.ADMIN + "/**",
+                        ApiPathConstants.AUDIT_LOGS + "/**")
+                    .hasRole(RoleConstants.ADMIN)
+
+                // Staff xem profile chính mình
+                .requestMatchers(HttpMethod.GET, ApiPathConstants.STAFF + "/me")
+                    .hasAnyRole(RoleConstants.STAFF, RoleConstants.ADMIN)
+                .requestMatchers(ApiPathConstants.STAFF + "/**")
+                    .hasRole(RoleConstants.ADMIN)
 
                 .anyRequest().authenticated()
             )
