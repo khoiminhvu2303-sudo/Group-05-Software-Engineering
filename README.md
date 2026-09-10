@@ -81,6 +81,8 @@ library-management-backend/
 
 │   │   ├── CorsConfig.java              # CORS Policy
 
+│   │   ├── WebMvcConfig.java            # Register Interceptor Additional
+
 │   │   └── JpaAuditingConfig.java       # Audit Trail
 
 │   │
@@ -340,7 +342,15 @@ library-management-backend/
 
 │   ├── interceptor/                     # Request Interceptors
 
-│   │   └── PerformanceInterceptor.java  # Đo thời gian response
+│   │   ├── AuditLogInterceptor.java
+
+│   │   ├── PerformanceInterceptor.java  # Đo thời gian response
+
+│   │   ├── RequestLoggingInterceptor
+
+│   │   ├── CorrelationIdInterceptor
+
+│   │   └── RateLimitInterceptor
 
 │   │
 
@@ -352,9 +362,31 @@ library-management-backend/
 
 │   │   ├── ValidationConstants.java
 
+│   │   ├── SecurityConstants.java
+
+│   │   ├── StatusConstants
+
+│   │   ├── BusinessRuleConstants
+
+│   │   ├── AuditActionConstants
+
+│   │   ├── RegexConstants
+
+│   │   ├── BookConstants.java
+
+│   │   ├── ReaderConstants.java
+
 │   │   ├── BorrowConstants.java
 
-│   │   └── FineConstants.java
+│   │   ├── FineConstants.java
+
+│   │   ├── ReservationConstants.java
+
+│   │   ├── PaginationConstants.java
+
+│   │   ├── RoleConstants
+
+│   │   └── ApiPathConstants
 
 │   │
 
