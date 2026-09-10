@@ -3,7 +3,7 @@
 Tài liệu hướng dẫn thiết lập môi trường để chạy dự án Spring Boot Backend.
 
 ## 1. Yêu cầu công cụ & Phần mềm (Prerequisites)
-- **Java Development Kit (JDK):** Java 17 trở lên (Đề xuất JDK 21).
+- **Java Development Kit (JDK):** Java 21 (JDK 21).
 - **Framework:** Spring Boot 3.x.x (Cấu hình dự án dùng 3.2.3).
 - **Build Tool:** Apache Maven 3.8+ (đã tích hợp trong IDE hoặc dùng Maven Wrapper).
 - **Database Management System:** MySQL 8.0+.
