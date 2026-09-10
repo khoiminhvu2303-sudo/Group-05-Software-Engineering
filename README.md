@@ -344,6 +344,8 @@ library-management-backend/
 
 │   │   ├── AuditLogInterceptor.java
 
+│   │   ├── AuditTable.java
+
 │   │   ├── PerformanceInterceptor.java  # Đo thời gian response
 
 │   │   ├── RequestLoggingInterceptor.java
