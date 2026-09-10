@@ -1,9 +1,0 @@
-SELECT 
-    b.*,
-    bc.copyID,
-    bc.barcode,
-    bc.shelfLocation,
-    bc.status AS copyStatus
-FROM Book b
-LEFT JOIN BookCopy bc ON b.bookID = bc.bookID
-WHERE b.bookID = ?;

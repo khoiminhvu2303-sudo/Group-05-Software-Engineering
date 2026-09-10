@@ -1,5 +1,0 @@
-UPDATE FineReceipt 
-SET status = 'Paid',
-    paidDate = NOW(),
-    staffID = ?
-WHERE fineID = ?;

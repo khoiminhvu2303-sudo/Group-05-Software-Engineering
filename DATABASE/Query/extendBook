@@ -1,3 +1,0 @@
-UPDATE BorrowDetail 
-SET dueDate = DATE_ADD(dueDate, INTERVAL 14 DAY)
-WHERE borrowDetailID = ?;

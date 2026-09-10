@@ -1,4 +1,0 @@
-UPDATE BorrowDetail 
-SET actualReturnDate = CURDATE(),
-    returnCondition = ?   -- 'Good', 'Damaged', 'Lost'
-WHERE borrowDetailID = ?;
