@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddToWishlistDTO {
-
-    @NotBlank(message = "Reader ID is required")
-    private String readerId;
+public class AddToWishlistRequest {
 
     @NotBlank(message = "Book ID is required")
     private String bookId;
