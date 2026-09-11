@@ -11,11 +11,12 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DashboardResponseDTO {
+public class DashboardResponse {
 
     private long totalBooks;
     private long totalActiveReaders;
-    private long totalActiveBorrows;
+    private long totalBorrowedBooks;
     private long totalOverdueBooks;
     private BigDecimal totalFineRevenue;
+    private long pendingReaderApprovals;
 }
