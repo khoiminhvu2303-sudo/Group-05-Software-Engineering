@@ -1,4 +1,4 @@
-package com.library.service.impl;
+package com.library.service;
 
 import com.library.dto.request.LoginDTO;
 import com.library.dto.request.RegisterReaderDTO;
@@ -7,22 +7,19 @@ import com.library.entity.Reader;
 import com.library.exception.AuthenticationException;
 import com.library.repository.ReaderRepository;
 import com.library.security.JwtTokenProvider;
-import com.library.service.AuthService;
-import com.library.service.ReaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService {
+public class AuthService {
 
     private final ReaderRepository readerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final ReaderService readerService;
 
-    @Override
     public String login(LoginDTO request) {
         Reader reader = readerRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AuthenticationException("Invalid username or password"));
@@ -34,7 +31,6 @@ public class AuthServiceImpl implements AuthService {
         return tokenProvider.generateToken(reader.getUsername());
     }
 
-    @Override
     public ReaderResponseDTO register(RegisterReaderDTO request) {
         return readerService.registerReader(request);
     }
