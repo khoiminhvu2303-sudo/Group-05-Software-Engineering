@@ -10,13 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateReservationDTO {
+public class CreateReservationRequest {
 
-    @NotBlank(message = "Reader ID is required")
-    private String readerId;
-
-    @NotBlank(message = "Copy ID is required")
-    private String copyId;
+    @NotBlank(message = "Book ID is required")
+    private String bookId;
 
     private String note;
 }
