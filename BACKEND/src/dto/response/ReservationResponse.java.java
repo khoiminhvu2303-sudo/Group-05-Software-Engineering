@@ -11,16 +11,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationResponseDTO {
+public class ReservationResponse {
 
-    private String reservationId;
-    private String readerId;
-    private String readerName;
-    private String copyId;
+    private String id;
+    private String bookId;
     private String bookTitle;
+    private Long readerId;
+    private String readerName;
     private LocalDateTime reservationDate;
     private LocalDateTime expiryDate;
-    private String status;
-    private String qrCode;
-    private String note;
+    private String status; // e.g., PENDING, READY_FOR_PICKUP, COMPLETED, CANCELLED, EXPIRED
+    private Integer queuePosition;
 }
