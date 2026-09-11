@@ -1,4 +1,4 @@
-package com.library.service.impl;
+package com.library.service;
 
 import com.library.dto.request.CreateBorrowDTO;
 import com.library.dto.response.BorrowResponseDTO;
@@ -6,7 +6,6 @@ import com.library.entity.*;
 import com.library.exception.InvalidOperationException;
 import com.library.exception.ResourceNotFoundException;
 import com.library.repository.*;
-import com.library.service.BorrowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BorrowServiceImpl implements BorrowService {
+public class BorrowService {
 
     private final BorrowRecordRepository borrowRecordRepository;
     private final BorrowDetailRepository borrowDetailRepository;
@@ -27,7 +26,6 @@ public class BorrowServiceImpl implements BorrowService {
     private final StaffRepository staffRepository;
     private final BookCopyRepository bookCopyRepository;
 
-    @Override
     @Transactional
     public BorrowResponseDTO createBorrowRecord(CreateBorrowDTO request) {
         Reader reader = readerRepository.findById(request.getReaderId())
@@ -74,7 +72,6 @@ public class BorrowServiceImpl implements BorrowService {
         return mapToResponse(savedRecord, details);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public BorrowResponseDTO getBorrowRecord(String transactionId) {
         BorrowRecord record = borrowRecordRepository.findById(transactionId)
