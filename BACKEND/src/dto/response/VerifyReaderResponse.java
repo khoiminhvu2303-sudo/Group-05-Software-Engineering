@@ -11,14 +11,14 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VerifyReaderResponseDTO {
+public class VerifyReaderResponse {
 
     private String readerId;
     private String fullName;
-    private String cccd;
-    private String email;
-    private String status;           // ACTIVE, EXPIRED, LOCKED
-    private boolean isValid;         // True if eligible to borrow books
+    private String cardCode;
+    private boolean isValid;
     private LocalDate expiryDate;
-    private String verificationNote; // Reason explanation if card is invalid
+    private String status;
+    private String qrCodeUrl;
+    private String message;
 }
