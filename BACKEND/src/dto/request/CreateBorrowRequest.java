@@ -7,24 +7,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateBorrowDTO {
+public class CreateBorrowRequest {
 
     @NotNull(message = "Reader ID is required")
-    private String readerId;
+    private Long readerId;
 
-    @NotNull(message = "Staff ID is required")
-    private String staffId;
+    @NotEmpty(message = "Book copy IDs are required")
+    private List<Long> bookCopyIds;
 
-    @NotNull(message = "Due date is required")
-    private LocalDate dueDate;
-
-    @NotEmpty(message = "At least one book copy must be provided")
-    private List<String> copyIds;
+    private Integer borrowDays;
 }
