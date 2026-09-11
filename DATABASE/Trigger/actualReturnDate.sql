@@ -62,3 +62,22 @@ BEGIN
 END; //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER before_update_borrowdetail_return
+BEFORE UPDATE ON BorrowDetail
+FOR EACH ROW
+BEGIN
+    -- Khi actualReturnDate được set từ NULL thành giá trị (tức đang trả sách)
+    IF NEW.actualReturnDate IS NOT NULL AND OLD.actualReturnDate IS NULL THEN
+        -- So sánh với dueDate (FR3.4)
+        IF NEW.actualReturnDate > NEW.dueDate THEN
+            SET NEW.status = 'Overdue';
+        ELSE
+            SET NEW.status = 'Returned';
+        END IF;
+    END IF;
+END; //
+
+DELIMITER ;
