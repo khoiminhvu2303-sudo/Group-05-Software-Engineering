@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookCopyResponseDTO {
+public class BookCopyResponse {
 
-    private String copyId;
-    private String bookId;
-    private String bookTitle;
+    private Long id;
     private String barcode;
-    private String status; // AVAILABLE, BORROWED, LOST, DAMAGED
+    private String status; // e.g., AVAILABLE, BORROWED, RESERVED, LOST
+    private String condition; // e.g., NEW, GOOD, DAMAGED
 }
