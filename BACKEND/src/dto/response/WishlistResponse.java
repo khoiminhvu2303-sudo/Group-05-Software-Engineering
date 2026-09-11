@@ -11,14 +11,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WishlistResponseDTO {
+public class WishlistResponse {
 
-    private String wishlistId;
-    private String readerId;
+    private Long id;
     private String bookId;
     private String bookTitle;
-    private String authorName;
-    private String categoryName;
-    private boolean isAvailable;
-    private LocalDateTime addedAt;
+    private String bookIsbn;
+    private String publisher;
+    private Integer availableCopies;
+    private LocalDateTime addedDate;
 }
