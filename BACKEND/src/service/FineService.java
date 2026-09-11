@@ -1,10 +1,9 @@
-package com.library.service.impl;
+package com.library.service;
 
 import com.library.entity.FineReceipt;
 import com.library.exception.InvalidOperationException;
 import com.library.exception.ResourceNotFoundException;
 import com.library.repository.FineReceiptRepository;
-import com.library.service.FineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +12,10 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
-public class FineServiceImpl implements FineService {
+public class FineService {
 
     private final FineReceiptRepository fineReceiptRepository;
 
-    @Override
     @Transactional
     public void payFine(String fineId, BigDecimal amount) {
         FineReceipt receipt = fineReceiptRepository.findById(fineId)
