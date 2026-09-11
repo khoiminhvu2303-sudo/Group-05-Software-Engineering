@@ -1,4 +1,4 @@
-package com.library.service.impl;
+package com.library.service;
 
 import com.library.dto.request.ProcessReturnDTO;
 import com.library.entity.BookCopy;
@@ -8,7 +8,6 @@ import com.library.exception.ResourceNotFoundException;
 import com.library.repository.BookCopyRepository;
 import com.library.repository.BorrowDetailRepository;
 import com.library.repository.FineReceiptRepository;
-import com.library.service.ReturnService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ReturnServiceImpl implements ReturnService {
+public class ReturnService {
 
     private static final BigDecimal DAILY_FINE_RATE = new BigDecimal("10000.00");
 
@@ -28,7 +27,6 @@ public class ReturnServiceImpl implements ReturnService {
     private final BookCopyRepository bookCopyRepository;
     private final FineReceiptRepository fineReceiptRepository;
 
-    @Override
     @Transactional
     public void processReturn(ProcessReturnDTO request) {
         BorrowDetail detail = borrowDetailRepository.findById(request.getBorrowDetailId())
