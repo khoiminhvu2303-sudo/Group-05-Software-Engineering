@@ -5,15 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HotBookResponseDTO {
+public class HotBookResponse {
 
     private String bookId;
     private String title;
-    private String authorName;
-    private String categoryName;
-    private long totalBorrowCount;
+    private String isbn;
+    private List<String> authors;
+    private long borrowCount;
 }
