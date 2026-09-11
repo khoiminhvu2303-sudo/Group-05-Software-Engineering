@@ -11,18 +11,13 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReaderResponseDTO {
+public class ReaderResponse {
 
-    private String readerId;
+    private Long id;
     private String fullName;
-    private LocalDate dob;
-    private String phone;
-    private String gender;
     private String email;
-    private String address;
-    private String cccd;
-    private LocalDate startDate;
+    private String phoneNumber;
+    private String cardCode;
     private LocalDate expiryDate;
-    private String username;
     private String status;
 }
