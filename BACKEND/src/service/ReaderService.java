@@ -1,11 +1,10 @@
-package com.library.service.impl;
+package com.library.service;
 
 import com.library.dto.request.RegisterReaderDTO;
 import com.library.dto.response.ReaderResponseDTO;
 import com.library.entity.Reader;
 import com.library.exception.ResourceNotFoundException;
 import com.library.repository.ReaderRepository;
-import com.library.service.ReaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,12 +17,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ReaderServiceImpl implements ReaderService {
+public class ReaderService {
 
     private final ReaderRepository readerRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
     @Transactional
     public ReaderResponseDTO registerReader(RegisterReaderDTO request) {
         Reader reader = new Reader();
@@ -45,7 +43,6 @@ public class ReaderServiceImpl implements ReaderService {
         return mapToResponse(savedReader);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public ReaderResponseDTO getReaderById(String readerId) {
         Reader reader = readerRepository.findById(readerId)
@@ -53,7 +50,6 @@ public class ReaderServiceImpl implements ReaderService {
         return mapToResponse(reader);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public List<ReaderResponseDTO> getAllReaders() {
         return readerRepository.findAll().stream()
