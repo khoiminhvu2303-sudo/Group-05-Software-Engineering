@@ -1,4 +1,4 @@
-package com.library.service.impl;
+package com.library.service;
 
 import com.library.entity.BookCopy;
 import com.library.entity.Reader;
@@ -8,7 +8,6 @@ import com.library.exception.ResourceNotFoundException;
 import com.library.repository.BookCopyRepository;
 import com.library.repository.ReaderRepository;
 import com.library.repository.ReservationRepository;
-import com.library.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +17,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationServiceImpl implements ReservationService {
+public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReaderRepository readerRepository;
     private final BookCopyRepository bookCopyRepository;
 
-    @Override
     @Transactional
     public void createReservation(String readerId, String copyId) {
         Reader reader = readerRepository.findById(readerId)
@@ -44,7 +42,6 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRepository.save(reservation);
     }
 
-    @Override
     @Transactional
     public void cancelReservation(String reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
