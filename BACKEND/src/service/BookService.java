@@ -1,10 +1,9 @@
-package com.library.service.impl;
+package com.library.service;
 
 import com.library.dto.response.BookResponseDTO;
 import com.library.entity.Book;
 import com.library.exception.ResourceNotFoundException;
 import com.library.repository.BookRepository;
-import com.library.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +13,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BookServiceImpl implements BookService {
+public class BookService {
 
     private final BookRepository bookRepository;
 
-    @Override
     @Transactional(readOnly = true)
     public BookResponseDTO getBookById(String bookId) {
         Book book = bookRepository.findById(bookId)
@@ -26,7 +24,6 @@ public class BookServiceImpl implements BookService {
         return mapToResponse(book);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public List<BookResponseDTO> getAllBooks() {
         return bookRepository.findAll().stream()
