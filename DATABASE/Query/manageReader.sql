@@ -1,21 +1,28 @@
+USE LIBRARY_MANAGEMENT_SYSTEM;
+
 SELECT * 
 FROM Reader 
-WHERE cardStatus = 'Pending' 
-ORDER BY createdDate ASC;
+WHERE Status = 'Suspended' 
+ORDER BY StartDate ASC;
 
 UPDATE Reader 
-SET cardStatus = 'Active',
-    cardExpiryDate = DATE_ADD(CURDATE(), INTERVAL 1 YEAR)
-WHERE readerID = ?;
+SET Status = 'Active',
+    ExpiryDate = DATE_ADD(CURDATE(), INTERVAL 1 YEAR)
+WHERE ReaderID = ?;
 
--- Khoá
-UPDATE Reader SET cardStatus = 'Suspended' WHERE readerID = ?;
+-- 3. Khóa thẻ độc giả
+UPDATE Reader 
+SET Status = 'Suspended' 
+WHERE ReaderID = ?;
 
--- Mở khoá
-UPDATE Reader SET cardStatus = 'Active' WHERE readerID = ?;
+-- 4. Mở khóa thẻ độc giả
+UPDATE Reader 
+SET Status = 'Active' 
+WHERE ReaderID = ?;
 
 SELECT * 
 FROM Reader 
-WHERE fullName LIKE CONCAT('%', ?, '%')
-   OR email LIKE CONCAT('%', ?, '%')
-   OR phone LIKE CONCAT('%', ?, '%');
+WHERE FullName LIKE CONCAT('%', ?, '%')
+   OR Email LIKE CONCAT('%', ?, '%')
+   OR Phone LIKE CONCAT('%', ?, '%');
+   
