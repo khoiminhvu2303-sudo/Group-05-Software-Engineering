@@ -1,5 +1,17 @@
-SELECT * FROM Staff WHERE isActive = 1;
-INSERT INTO Staff (fullName, email, role, passwordHash)
-VALUES (?, ?, ?, ?);
-UPDATE Staff SET role = ? WHERE staffID = ?;
-UPDATE Staff SET isActive = 0 WHERE staffID = ?;
+USE LIBRARY_MANAGEMENT_SYSTEM;
+
+SELECT * 
+FROM Staff 
+WHERE Status = 'Active';
+
+INSERT INTO Staff (StaffID, StaffName, Email, NameLogin_Staff, Password_Staff, Status, ManagedByAdminID)
+VALUES (?, ?, ?, ?, ?, 'Active', ?);
+
+UPDATE Staff 
+SET ManagedByAdminID = ?,
+    Salary = ?
+WHERE StaffID = ?;
+
+UPDATE Staff 
+SET Status = 'Inactive' 
+WHERE StaffID = ?;
