@@ -1,26 +1,40 @@
-SELECT 
-    b.bookID,
-    b.title,
-    b.author,
-    b.genre,
-    b.publicationYear,
-    b.publisher,
-    b.isbn,
-    (SELECT COUNT(*) FROM BookCopy bc 
-     WHERE bc.bookID = b.bookID AND bc.status = 'Available') AS availableCopies
-FROM Book b
-WHERE b.title LIKE CONCAT('%', ?, '%')
-   OR b.author LIKE CONCAT('%', ?, '%')
-   OR b.genre LIKE CONCAT('%', ?, '%')
-   OR b.isbn = ?
-ORDER BY b.title;
+USE LIBRARY_MANAGEMENT_SYSTEM;
 
 SELECT 
-    b.*,
-    bc.copyID,
-    bc.barcode,
-    bc.shelfLocation,
-    bc.status AS copyStatus
+    b.BookID,
+    b.Title,
+    a.AuthorName,
+    c.CategoryName,
+    b.Publication,
+    p.Name AS PublisherName,
+    (SELECT COUNT(*) 
+     FROM BookCopy bc 
+     WHERE bc.BookID = b.BookID AND bc.Status = 'Available') AS AvailableCopies
 FROM Book b
-LEFT JOIN BookCopy bc ON b.bookID = bc.bookID
-WHERE b.bookID = ?;
+JOIN Author a ON b.AuthorID = a.AuthorID
+JOIN Category c ON b.CategoryID = c.CategoryID
+JOIN Publisher p ON b.PublisherID = p.PublisherID
+WHERE b.Title LIKE CONCAT('%', ?, '%')
+   OR a.AuthorName LIKE CONCAT('%', ?, '%')
+   OR c.CategoryName LIKE CONCAT('%', ?, '%')
+ORDER BY b.Title;
+
+SELECT 
+    b.BookID,
+    b.Title,
+    b.`Describe`,
+    b.Publication,
+    a.AuthorName,
+    p.Name AS PublisherName,
+    c.CategoryName,
+    bc.CopyID,
+    bc.Barcode,
+    bc.`Condition`,
+    bc.Price,
+    bc.Status AS CopyStatus
+FROM Book b
+JOIN Author a ON b.AuthorID = a.AuthorID
+JOIN Publisher p ON b.PublisherID = p.PublisherID
+JOIN Category c ON b.CategoryID = c.CategoryID
+LEFT JOIN BookCopy bc ON b.BookID = bc.BookID
+WHERE b.BookID = ?;
