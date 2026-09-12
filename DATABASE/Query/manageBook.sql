@@ -1,14 +1,21 @@
-INSERT INTO Book (title, author, publisher, publicationYear, genre, isbn, description)
-VALUES (?, ?, ?, ?, ?, ?, ?);
-INSERT INTO BookCopy (bookID, barcode, shelfLocation, status)
-VALUES (?, ?, ?, 'Available');
+USE LIBRARY_MANAGEMENT_SYSTEM;
+
+INSERT INTO Book (BookID, Title, `Describe`, Publication, Stockquantity, Status, AuthorID, PublisherID, CategoryID)
+VALUES (?, ?, ?, ?, ?, 'Available', ?, ?, ?);
+
+INSERT INTO BookCopy (CopyID, BookID, Barcode, Status, `Condition`, Price)
+VALUES (?, ?, ?, 'Available', ?, ?);
+
 UPDATE Book 
-SET title = ?,
-    author = ?,
-    publisher = ?,
-    publicationYear = ?,
-    genre = ?,
-    isbn = ?,
-    description = ?
-WHERE bookID = ?;
-UPDATE BookCopy SET status = 'Lost' WHERE copyID = ?;
+SET Title = ?,
+    `Describe` = ?,
+    Publication = ?,
+    Stockquantity = ?,
+    AuthorID = ?,
+    PublisherID = ?,
+    CategoryID = ?
+WHERE BookID = ?;
+
+UPDATE BookCopy 
+SET Status = 'Lost' 
+WHERE CopyID = ?;
