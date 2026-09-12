@@ -10,12 +10,10 @@ SET Status = 'Active',
     ExpiryDate = DATE_ADD(CURDATE(), INTERVAL 1 YEAR)
 WHERE ReaderID = ?;
 
--- 3. Khóa thẻ độc giả
 UPDATE Reader 
 SET Status = 'Suspended' 
 WHERE ReaderID = ?;
 
--- 4. Mở khóa thẻ độc giả
 UPDATE Reader 
 SET Status = 'Active' 
 WHERE ReaderID = ?;
