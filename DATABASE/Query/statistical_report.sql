@@ -1,33 +1,36 @@
+USE LIBRARY_MANAGEMENT_SYSTEM;
+
 SELECT 
-    b.bookID,
-    b.title,
-    COUNT(*) AS borrowCount
+    b.BookID,
+    b.Title,
+    COUNT(*) AS BorrowCount
 FROM BorrowDetail bd
-JOIN BookCopy bc ON bd.copyID = bc.copyID
-JOIN Book b ON bc.bookID = b.bookID
-GROUP BY b.bookID, b.title
-ORDER BY borrowCount DESC
+JOIN BookCopy bc ON bd.CopyID = bc.CopyID
+JOIN Book b ON bc.BookID = b.BookID
+GROUP BY b.BookID, b.Title
+ORDER BY BorrowCount DESC
 LIMIT 10;
 
 SELECT 
-    DATE_FORMAT(br.borrowDate, '%Y-%m') AS month,
-    COUNT(*) AS totalBorrows
+    DATE_FORMAT(br.BorrowDate, '%Y-%m') AS Month,
+    COUNT(*) AS TotalBorrows
 FROM BorrowRecord br
-GROUP BY month
-ORDER BY month DESC;
+GROUP BY Month
+ORDER BY Month DESC;
 
 SELECT * FROM v_OverdueLoans;
-SELECT 
-    DATE_FORMAT(paidDate, '%Y-%m') AS month,
-    SUM(amount) AS totalFine
-FROM FineReceipt
-WHERE status = 'Paid'
-GROUP BY month
-ORDER BY month DESC;
 
 SELECT 
-    DATE_FORMAT(createdDate, '%Y-%m') AS month,
-    COUNT(*) AS newReaders
+    DATE_FORMAT(PaidDate, '%Y-%m') AS Month,
+    SUM(Amount) AS TotalFine
+FROM DetailFineReceipt
+WHERE Status = 'Paid'
+GROUP BY Month
+ORDER BY Month DESC;
+
+SELECT 
+    DATE_FORMAT(StartDate, '%Y-%m') AS Month,
+    COUNT(*) AS NewReaders
 FROM Reader
-GROUP BY month
-ORDER BY month DESC;
+GROUP BY Month
+ORDER BY Month DESC;
