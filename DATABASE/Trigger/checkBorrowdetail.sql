@@ -1,5 +1,6 @@
 DELIMITER //
 
+DROP TRIGGER IF EXISTS before_update_borrowdetail_renew //
 CREATE TRIGGER before_update_borrowdetail_renew
 BEFORE UPDATE ON BorrowDetail
 FOR EACH ROW
