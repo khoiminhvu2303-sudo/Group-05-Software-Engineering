@@ -1,64 +1,65 @@
--- 7.1. View chi tiết phiếu mượn (kết hợp đầy đủ thông tin)
+USE LIBRARY_MANAGEMENT_SYSTEM;
+
+DROP VIEW IF EXISTS v_BorrowDetails;
 CREATE VIEW v_BorrowDetails AS
 SELECT 
-    br.borrowID,
-    r.fullName AS readerName,
-    r.email AS readerEmail,
-    s.fullName AS staffName,
-    br.borrowDate,
-    bd.borrowDetailID,
-    bk.title,
-    bc.barcode,
-    bc.shelfLocation,
-    bd.dueDate,
-    bd.actualReturnDate,
-    bd.status AS loanStatus,
-    bd.renewalCount,
-    bd.returnCondition,
-    fr.fineID,
-    fr.amount AS fineAmount,
-    fr.status AS fineStatus
+    br.BorrowID,
+    r.FullName AS readerName,
+    r.Email AS readerEmail,
+    s.StaffName AS staffName,               
+    br.BorrowDate,
+    bd.BorrowDetailID,
+    bk.Title,
+    bc.Barcode,
+    bd.DueDate,
+    bd.ActualReturnDate,
+    bd.Status AS loanStatus,
+    bd.RenewalCount,
+    bd.ReturnCondition,
+    dfr.DetailFineID AS fineID,             
+    dfr.Amount AS fineAmount,
+    dfr.Status AS fineStatus
 FROM BorrowRecord br
-JOIN Reader r ON br.readerID = r.readerID
-JOIN Staff s ON br.staffID = s.staffID
-JOIN BorrowDetail bd ON br.borrowID = bd.borrowID
-JOIN BookCopy bc ON bd.copyID = bc.copyID
-JOIN Book bk ON bc.bookID = bk.bookID
-LEFT JOIN FineReceipt fr ON bd.borrowDetailID = fr.borrowDetailID;
+JOIN Reader r ON br.ReaderID = r.ReaderID
+JOIN Staff s ON br.StaffID = s.StaffID
+JOIN BorrowDetail bd ON br.BorrowID = bd.BorrowID
+JOIN BookCopy bc ON bd.CopyID = bc.CopyID
+JOIN Book bk ON bc.BookID = bk.BookID
+LEFT JOIN DetailFineReceipt dfr ON bd.BorrowDetailID = dfr.BorrowDetailID;
 
--- 7.2. View phiếu phạt chưa thanh toán
+DROP VIEW IF EXISTS v_UnpaidFines;
 CREATE VIEW v_UnpaidFines AS
 SELECT 
-    fr.fineID,
-    r.fullName AS readerName,
-    r.email AS readerEmail,
-    bk.title,
-    bc.barcode,
-    fr.reason,
-    fr.amount,
-    fr.issuedDate
-FROM FineReceipt fr
-JOIN BorrowDetail bd ON fr.borrowDetailID = bd.borrowDetailID
-JOIN BorrowRecord br ON bd.borrowID = br.borrowID
-JOIN Reader r ON br.readerID = r.readerID
-JOIN BookCopy bc ON bd.copyID = bc.copyID
-JOIN Book bk ON bc.bookID = bk.bookID
-WHERE fr.status = 'Pending';
+    dfr.DetailFineID AS fineID,
+    r.FullName AS readerName,
+    r.Email AS readerEmail,
+    bk.Title,
+    bc.Barcode,
+    dfr.Reason,
+    dfr.Amount,
+    dfr.IssuedDate
+FROM DetailFineReceipt dfr
+JOIN BorrowDetail bd ON dfr.BorrowDetailID = bd.BorrowDetailID
+JOIN BorrowRecord br ON bd.BorrowID = br.BorrowID
+JOIN Reader r ON br.ReaderID = r.ReaderID
+JOIN BookCopy bc ON bd.CopyID = bc.CopyID
+JOIN Book bk ON bc.BookID = bk.BookID
+WHERE dfr.Status = 'Pending';
 
--- 7.3. View sách đang mượn nhưng quá hạn (chưa trả)
+DROP VIEW IF EXISTS v_OverdueLoans;
 CREATE VIEW v_OverdueLoans AS
 SELECT 
-    bd.borrowDetailID,
-    r.fullName AS readerName,
-    r.email AS readerEmail,
-    bk.title,
-    bc.barcode,
-    bd.dueDate,
-    DATEDIFF(CURDATE(), bd.dueDate) AS overdueDays
+    bd.BorrowDetailID,
+    r.FullName AS readerName,
+    r.Email AS readerEmail,
+    bk.Title,
+    bc.Barcode,
+    bd.DueDate,
+    DATEDIFF(CURDATE(), bd.DueDate) AS overdueDays
 FROM BorrowDetail bd
-JOIN BorrowRecord br ON bd.borrowID = br.borrowID
-JOIN Reader r ON br.readerID = r.readerID
-JOIN BookCopy bc ON bd.copyID = bc.copyID
-JOIN Book bk ON bc.bookID = bk.bookID
-WHERE bd.actualReturnDate IS NULL
-  AND bd.dueDate < CURDATE();
+JOIN BorrowRecord br ON bd.BorrowID = br.BorrowID
+JOIN Reader r ON br.ReaderID = r.ReaderID
+JOIN BookCopy bc ON bd.CopyID = bc.CopyID
+JOIN Book bk ON bc.BookID = bk.BookID
+WHERE bd.ActualReturnDate IS NULL
+  AND bd.DueDate < CURDATE();
